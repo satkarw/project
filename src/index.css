@@ -842,6 +842,14 @@ video {
   padding-top: 1.25rem;
 }
 
+.pr-5 {
+  padding-right: 1.25rem;
+}
+
+.pr-3 {
+  padding-right: 0.75rem;
+}
+
 .text-sm {
   font-size: 0.875rem;
   line-height: 1.25rem;

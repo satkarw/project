@@ -4,6 +4,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { saveDataToFirestore, savePostToRealtimeDatabase } from './firebaseConfig';
 import { db } from './firebaseConfig'; // Import Firestore instance
 
+
 export default function Head(props) {
 
     function isLoggedIn() {
@@ -97,6 +98,10 @@ export default function Head(props) {
         <div className="">
             {/* header */}
             <div className="flex justify-center items-center border-b border-gray-700 pb-5 ml-8">
+
+            <a href="#">
+                <img src={logo} alt="Logo" className="w-10 pr-3 rounded-lg" />
+            </a>
                 <a href="#" className="text-xl hover hover:underline">Your Feed</a>
                 <div className="ml-auto mr-2">
                     {isLoggedIn() ?
