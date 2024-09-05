@@ -5,7 +5,7 @@ import homeIcon from "../../public/homeIcon.png";
 
 export default function Left() {
     return (
-        <div className="h-screen flex flex-col items-center"> 
+        <div className="h-screen md:flex md:flex-col hidden items-center "> 
             <a href="#">
                 <img src={logo} alt="Logo" className="w-10  rounded-lg" />
             </a>
