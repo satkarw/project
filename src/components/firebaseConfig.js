@@ -86,7 +86,7 @@ export const fetchPostsFromRealtimeDatabase = async () => {
 
     if (snapshot.exists()) {
       const posts = snapshot.val(); // Returns an object containing all posts
-      return Object.values(posts).reverse(); // Reverse the array to have newest first
+      return Object.values(posts); // Reverse the array to have newest first
     } else {
       console.log('No data available');
       return [];

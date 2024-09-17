@@ -26,7 +26,7 @@ export default function Feed(props){
         {props.newPost && 
         
          
-        <div className="mt-4 ml-7 mr-3 border p-3 rounded-lg flex flex-col gap-4 ">
+        <div className="mt-4 ml-7 mr-3 border border-gray-700 p-3 rounded-lg flex flex-col gap-4 ">
 
         {/* user name and dp */}
 
@@ -50,6 +50,7 @@ export default function Feed(props){
             <p className='text-slate-600 text-sm ml-5'> likes and comments -- comming soon </p>
 
         </div>
+        
         </div>
         
         }
@@ -60,7 +61,7 @@ posts.map((post,index) =>
 
             (
                 
-                <div className="mt-4 ml-7 mr-3 border p-3 rounded-lg flex flex-col gap-4 ">
+                <div key={post.id || index} className="mt-4 ml-7 mr-3 border p-3 rounded-lg flex flex-col gap-4 ">
 
                 {/* user name and dp */}
     

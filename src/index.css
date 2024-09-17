@@ -667,20 +667,12 @@ video {
   width: 100%;
 }
 
-.w-screen {
-  width: 100vw;
-}
-
 .min-w-\[100px\] {
   min-width: 100px;
 }
 
 .resize-none {
   resize: none;
-}
-
-.grid-cols-\[50px_minmax\(0\2c 800px\)\] {
-  grid-template-columns: 50px minmax(0,800px);
 }
 
 .grid-cols-\[minmax\(0\2c 800px\)\] {
@@ -838,16 +830,12 @@ video {
   padding-left: 0.5rem;
 }
 
-.pt-5 {
-  padding-top: 1.25rem;
-}
-
-.pr-5 {
-  padding-right: 1.25rem;
-}
-
 .pr-3 {
   padding-right: 0.75rem;
+}
+
+.pt-5 {
+  padding-top: 1.25rem;
 }
 
 .text-sm {

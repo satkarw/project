@@ -4,6 +4,7 @@ import Head from "./Head";
 import Feed from './Feed'
 import Sign from "./Sign";
 import Login from "./Login";
+
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { fetchDataFromFirestore } from './firebaseConfig';
 
@@ -51,10 +52,12 @@ export default function Mid(){
         <Head 
         setLoginState={setLoginState}
          ifLoggedIn={ifLoggedIn} 
+         setIfLoggedIn={setIfLoggedIn}
          userData={userObj}
          userId={userObj.uid}
          userPosts={userPosts}
          setNewPost={setNewPost}
+         setUserObj={setUserObj}
         
         />
         <Feed 
@@ -65,7 +68,13 @@ export default function Mid(){
 
         
         
-        { !logInState ?null: logInState === 'signin'? <Sign setLoginState={setLoginState} setIfLoggedIn={setIfLoggedIn} />:<Login setLoginState={setLoginState} /> }
+        { !logInState ?null: logInState === 'signin'? 
+        
+        <Sign setLoginState={setLoginState} setIfLoggedIn={setIfLoggedIn} />
+        :
+        <Login setLoginState={setLoginState}  setIfLoggedIn={setIfLoggedIn} /> 
+        
+        }
 
         </div>
    

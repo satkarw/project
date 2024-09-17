@@ -3,7 +3,7 @@ import logo from "../../public/logo.png";
 import { doc, getDoc } from 'firebase/firestore';
 import { saveDataToFirestore, savePostToRealtimeDatabase } from './firebaseConfig';
 import { db } from './firebaseConfig'; // Import Firestore instance
-
+import Logout from "./Logout";
 
 export default function Head(props) {
 
@@ -15,33 +15,25 @@ export default function Head(props) {
         props.setLoginState('login');
     }
 
-    function handelSingnin() {
+    function handelSignin() {
         props.setLoginState('signin');
     }
 
-    // When user tries to post without logging in.
-    function handelNotLoggedInPostClick() {
-        const postText = document.getElementById('textInput').value;
+    // Handle post submission without logging in
+    function handleNotLoggedInPostClick() {
         const loginFirstText = document.getElementById('loginFirstText');
         loginFirstText.classList.remove('hidden');
-
         setTimeout(() => {
             loginFirstText.classList.add('hidden');
         }, 2000);
     }
 
-
-
-    //this handels postinggggg 
-
-    async function handelPost() {
+    // Handle posting when logged in
+    async function handlePost() {
         const postText = document.getElementById('textInput').value;
         const userId = props.userData.uid;
 
         if (postText.trim() !== '') {
-            
-
-            // Fetch existing user data first
             try {
                 const docRef = doc(db, 'users', userId);
                 const docSnapshot = await getDoc(docRef);
@@ -49,28 +41,22 @@ export default function Head(props) {
                 if (docSnapshot.exists()) {
                     const userData = docSnapshot.data();
                     const existingPosts = userData.userPosts || [];
-                    const ghostName =userData.ghostName;
-                    
-                    const postId = `${userId}${existingPosts.length+1}`;
+                    const ghostName = userData.ghostName;
+                    const postId = `${userId}${existingPosts.length + 1}`;
 
                     const postData = {
                         postId: postId,
                         postText: postText,
-                        ghostName:ghostName,
+                        ghostName: ghostName,
                         userId: userId,
-                        timestamp: Date.now() 
-                };
+                        timestamp: Date.now(),
+                    };
 
                     // Append new post to existing posts
                     const updatedPosts = [...existingPosts, postData];
 
-                
-
-            
-
                     // Save updated posts to Firestore
                     await saveDataToFirestore('users', { userPosts: updatedPosts }, userId);
-                   
 
                     // Clear textarea
                     document.getElementById('textInput').value = '';
@@ -79,9 +65,6 @@ export default function Head(props) {
                     await savePostToRealtimeDatabase(postData);
                     console.log('Post saved to Realtime Database');
                     props.setNewPost(postData);
-                    
-                    
-
 
                 } else {
                     console.error('No such document!');
@@ -96,35 +79,41 @@ export default function Head(props) {
 
     return (
         <div className="">
-            {/* header */}
+            {/* Header */}
             <div className="flex justify-center items-center border-b border-gray-700 pb-5 ml-8">
-
-            <a href="#">
-                <img src={logo} alt="Logo" className="w-10 pr-3 rounded-lg" />
-            </a>
+                <a href="#">
+                    <img src={logo} alt="Logo" className="w-10 pr-3 rounded-lg" />
+                </a>
                 <a href="#" className="text-xl hover hover:underline">Your Feed</a>
                 <div className="ml-auto mr-2">
-                    {isLoggedIn() ?
-                        <button>Profile</button>
-                        :
+                    {isLoggedIn() ? (
+                        <div className="flex gap-2">
+                            <button>Profile</button>
+                            <Logout 
+                                setIfLoggedIn={props.setIfLoggedIn} 
+                                setUserObj={props.setUserObj} 
+                            />
+                        </div>
+                    ) : (
                         <div className="flex gap-5">
                             <button className="border px-2 rounded-md hover:bg-slate-800" onClick={handelLogin}>
                                 Log-in
                             </button>
-                            <button className="border px-2 rounded-md hover:bg-slate-800" onClick={handelSingnin}>
+                            <button className="border px-2 rounded-md hover:bg-slate-800" onClick={handelSignin}>
                                 Sign-up
                             </button>
                         </div>
-                    }
+                    )}
                 </div>
             </div>
 
-
-            {/* post box */}
+            {/* Post Box */}
             <div className="border-b border-gray-700 py-5 ml-7">
                 <div className="flex gap-6">
                     <img src={logo} alt="" className="w-10 h-10 rounded-full" />
-                    <textarea type="text" id="textInput"
+                    <textarea 
+                        type="text" 
+                        id="textInput"
                         className="bg-transparent h-fit w-full p-1 pl-2 resize-none"
                         placeholder="Write your Ghost Status"
                         onInput={(e) => {
@@ -133,21 +122,25 @@ export default function Head(props) {
                         }}
                     />
                     <div className="flex flex-col gap-2">
-                        {isLoggedIn() ?
-                            <button className="bg-slate-900 hover:bg-slate-700 text-white px-5 h-fit py-3 border rounded-lg mr-2"
-                                onClick={handelPost}>
+                        {isLoggedIn() ? (
+                            <button 
+                                className="bg-slate-900 hover:bg-slate-700 text-white px-5 h-fit py-3 border rounded-lg mr-2"
+                                onClick={handlePost}
+                            >
                                 Post
                             </button>
-                            :
-                            <button className="bg-slate-900 hover:bg-slate-700 text-white px-5 h-fit py-3 border active:bg-red-800 active:border-red-900 rounded-lg mr-2"
-                                onClick={handelNotLoggedInPostClick}>
+                        ) : (
+                            <button 
+                                className="bg-slate-900 hover:bg-slate-700 text-white px-5 h-fit py-3 border active:bg-red-800 active:border-red-900 rounded-lg mr-2"
+                                onClick={handleNotLoggedInPostClick}
+                            >
                                 Post
                             </button>
-                        }
+                        )}
                         <p className="text-red-500 hidden" id='loginFirstText'>login first</p>
                     </div>
                 </div>
             </div>
         </div>
-    )
+    );
 }
