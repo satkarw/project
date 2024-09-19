@@ -61,9 +61,9 @@ export default function Sign(props){
     return (
         
         <>
-        <div className=" absolute z-50  flex flex-col 
+        <div className=" fixed  z-50  flex flex-col 
         gap-5 justify-center items-center bg-slate-900 w-[350px] h-[450px] 
-        right-[12%] md:right-[27%] top-[50px]
+       self-center top-[150px]
         rounded-3xl "> 
             <h1>Sign-Up</h1>
 
