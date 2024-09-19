@@ -30,7 +30,7 @@ export default function Mid(){
     } 
   });
 
-  ////update this too, because it seems that userPost isnt taking that properly
+
   const [userPosts, setUserPosts] =useState([]); 
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function Mid(){
     if (userObj?.uid) {
       fetchDataFromFirestore('users', userObj.uid)
         .then(data => {
-          const userData = data[0]; // Assuming the first document in the result is the one you need
+          const userData = data[0]; 
           setUserPosts(userData?.userPosts || []);
         })
         .catch(error => console.error('Error fetching user posts:', error));
@@ -47,7 +47,7 @@ export default function Mid(){
     return (
         
         <>
-        <div className="relative">
+        <div className="relative flex flex-col">
 
         <Head 
         setLoginState={setLoginState}
