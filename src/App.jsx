@@ -32,7 +32,7 @@ function App() {
 
 
 
-          <div className='overflow-auto overflow-y-scroll no-scrollbar min-w-[100px] border-l border-r border-gray-700'>
+          <div className='overflow-auto overflow-y-scroll no-scrollbar min-w-[100px] border-l border-r border-gray-700 md:pl-0 '>
 
             <Routes>
 

@@ -8,7 +8,7 @@ export default function Left(props) {
   
 
     return (
-        <div className="h-screen md:flex md:flex-col hidden items-center "> 
+        <div className="h-screen  md:flex md:flex-col hidden items-center "> 
             <a href="#">
                 <img src={logo} alt="Logo" className="w-10  rounded-lg" />
             </a>

@@ -84,7 +84,7 @@ export default function Head(props) {
     return (
         <div>
             {/* Header */}
-            <div className="flex justify-center items-center border-b border-gray-700 pb-5 ml-8">
+            <div className="flex justify-center items-center border-b border-gray-700 pb-5 ml-5">
                 <a href="#">
                     <img src={logo} alt="Logo" className="w-10 pr-3 rounded-lg" />
                 </a>
@@ -96,7 +96,7 @@ export default function Head(props) {
                 {/* ------------------------Profile Button---------------------------------------------------------- */}
 
                         
-                            <button >
+                            <button className="border px-3 rounded-md hover:bg-slate-800 " >
                                <Link to="/profile">Profile</Link>
                             </button>
 
