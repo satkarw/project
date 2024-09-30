@@ -84,7 +84,7 @@ export default function Head(props) {
     return (
         <div>
             {/* Header */}
-            <div className="flex justify-center items-center border-b border-gray-700 pb-5 ml-5">
+            <div className="flex justify-center items-center border-b border-gray-700 pb-5 pl-5">
                 <a href="#">
                     <img src={logo} alt="Logo" className="w-10 pr-3 rounded-lg" />
                 </a>
@@ -121,7 +121,7 @@ export default function Head(props) {
             </div>
 
             {/* Post Box */}
-            <div className="border-b border-gray-700 py-5 ml-7">
+            <div className="border-b border-gray-700 py-5 pl-5">
                 <div className="flex gap-6">
                     <img src={logo} alt="" className="w-10 h-10 rounded-full" />
                     <textarea 
