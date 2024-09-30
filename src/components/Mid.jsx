@@ -1,4 +1,4 @@
-import React, {useState,useEffect} from "react";
+import React, {useState,useEffect, useCallback} from "react";
 
 import Head from "./Head";
 import Feed from './Feed'
@@ -7,28 +7,43 @@ import Login from "./Login";
 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { fetchDataFromFirestore } from './firebaseConfig';
+import Profile from "./Profile";
 
 
 
 
 
-export default function Mid(){
+export default function Mid(props){
 
   const [logInState,setLoginState] = useState('');
   const [ifLoggedIn, setIfLoggedIn] = useState(false)
   const auth = getAuth();
   const [userObj,setUserObj]=useState('');
   const [newPost,setNewPost]=useState('');
+  // const [profileClick, setProfileClick] = useState(false);
   
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-     setIfLoggedIn(true)
-     
-     setUserObj(user);
-    
 
-    } 
-  });
+  useEffect(() =>{
+    const unsubscribe =   onAuthStateChanged(auth, (user) => {
+      if (user) {
+       setIfLoggedIn(true)
+       
+       setUserObj(user);
+      
+  
+      } 
+      else {
+
+        setIfLoggedIn(false);
+        setUserObj(null);  // Handle when user logs ou
+      }
+    });
+
+    return () => unsubscribe();
+
+  },[auth]);
+  
+
 
 
   const [userPosts, setUserPosts] =useState([]); 
@@ -44,41 +59,41 @@ export default function Mid(){
         .catch(error => console.error('Error fetching user posts:', error));
     }
   }, [userObj?.uid]);
-    return (
-        
-        <>
-        <div className="relative flex flex-col">
 
-        <Head 
+
+
+
+  function handelProfileClick(){
+
+    
+    props.setProfileClick(!props.profileClick);
+    console.log(props.profileClick);
+  
+  }
+
+
+
+  return (
+    <div className={`relative flex flex-col`}>
+      <Head 
         setLoginState={setLoginState}
-         ifLoggedIn={ifLoggedIn} 
-         setIfLoggedIn={setIfLoggedIn}
-         userData={userObj}
-         userId={userObj.uid}
-         userPosts={userPosts}
-         setNewPost={setNewPost}
-         setUserObj={setUserObj}
-        
-        />
-        <Feed 
-        
         ifLoggedIn={ifLoggedIn}
-        newPost ={newPost}
-        />
-
-        
-        
-        { !logInState ?null: logInState === 'signin'? 
-        
+        setIfLoggedIn={setIfLoggedIn}
+        userData={userObj}
+        userId={userObj?.uid}
+        userPosts={userPosts}
+        setNewPost={setNewPost}
+        setUserObj={setUserObj}
+      />
+      <Feed 
+        ifLoggedIn={ifLoggedIn}
+        newPost={newPost}
+      />
+      { logInState && (logInState === 'signin' ? 
         <Sign setLoginState={setLoginState} setIfLoggedIn={setIfLoggedIn} />
         :
-        <Login setLoginState={setLoginState}  setIfLoggedIn={setIfLoggedIn} /> 
-        
-        }
-
-        </div>
-   
-
-        </>
-    )
+        <Login setLoginState={setLoginState} setIfLoggedIn={setIfLoggedIn} />
+      )}
+    </div>
+  );
 }

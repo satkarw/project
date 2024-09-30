@@ -61,21 +61,35 @@ posts.map((post,index) =>
 
             (
                 
-                <div key={post.id || index} className="mt-4 ml-7 mr-3 border p-3 rounded-lg flex flex-col gap-4 ">
+                <div key={post.id || index} className="mt-4 ml-7 mr-3 border border-gray-700 p-3 rounded-lg flex flex-col gap-4 ">
 
                 {/* user name and dp */}
     
                
                 <div className="flex gap-2 items-center">
                     <img src={logo} alt=""  className="rounded-full w-10"/>
-                    <a href="#" className="text-xl"><strong>{post.ghostName}</strong></a>
+                    <a href="#" className="text-xl">
+                        <strong>{post.ghostName}</strong>
+
+                    </a>
+                    <p className='text-slate-600 text-sm pt-[3px] pl-[5px]'>
+
+                         {new Intl.DateTimeFormat('en-US', {
+                              
+                              month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: false,
+                     }).format(new Date(post.timestamp))}
+                    </p>
     
                 </div>
     
     
                 {/* text content */}
-                <div className="m-3 pb-2 border-b">
-                    <p className="text-xl">
+                <div className="m-3 pb-2 border-b whitespace-pre-wrap">
+                    <p className="md:text-xl text-lg">
                    {post.postText}
                     </p>
                 </div>

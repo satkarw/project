@@ -4,6 +4,7 @@ import { doc, getDoc } from 'firebase/firestore';
 import { saveDataToFirestore, savePostToRealtimeDatabase } from './firebaseConfig';
 import { db } from './firebaseConfig'; // Import Firestore instance
 import Logout from "./Logout";
+import { Link } from "react-router-dom";
 
 export default function Head(props) {
 
@@ -30,7 +31,7 @@ export default function Head(props) {
 
     // Handle posting when logged in
     async function handlePost() {
-        const postText = document.getElementById('textInput').value;
+        const postText = document.getElementById('textInput').value.replace(/\r\n/g, '\n');
         const userId = props.userData.uid;
 
         if (postText.trim() !== '') {
@@ -46,7 +47,7 @@ export default function Head(props) {
 
                     const postData = {
                         postId: postId,
-                        postText: postText,
+                        postText: postText.replace(/\r\n/g, '\n'),
                         ghostName: ghostName,
                         userId: userId,
                         timestamp: Date.now(),
@@ -77,8 +78,11 @@ export default function Head(props) {
         }
     }
 
+    
+
+
     return (
-        <div className="">
+        <div>
             {/* Header */}
             <div className="flex justify-center items-center border-b border-gray-700 pb-5 ml-8">
                 <a href="#">
@@ -88,7 +92,16 @@ export default function Head(props) {
                 <div className="ml-auto mr-2">
                     {isLoggedIn() ? (
                         <div className="flex gap-2">
-                            <button>Profile</button>
+
+                {/* ------------------------Profile Button---------------------------------------------------------- */}
+
+                        
+                            <button >
+                               <Link to="/profile">Profile</Link>
+                            </button>
+
+
+
                             <Logout 
                                 setIfLoggedIn={props.setIfLoggedIn} 
                                 setUserObj={props.setUserObj} 
@@ -114,7 +127,7 @@ export default function Head(props) {
                     <textarea 
                         type="text" 
                         id="textInput"
-                        className="bg-transparent h-fit w-full p-1 pl-2 resize-none"
+                        className="bg-transparent h-fit w-full p-1 pl-2 resize-none whitespace-pre"
                         placeholder="Write your Ghost Status"
                         onInput={(e) => {
                             e.target.style.height = 'auto';
