@@ -6,6 +6,7 @@ import { db } from './firebaseConfig'; // Import Firestore instance
 import Logout from "./Logout";
 import { Link } from "react-router-dom";
 
+
 export default function Head(props) {
 
     function isLoggedIn() {
@@ -97,7 +98,10 @@ export default function Head(props) {
 
                         
                             <button className="border px-3 rounded-md hover:bg-slate-800 " >
-                               <Link to="/profile">Profile</Link>
+                               <Link to="/profile"
+                               state={{userPosts: props.userPosts, userID:props.userId , userProfile: props.userProfile} }
+                               
+                               >Profile</Link>
                             </button>
 
 

@@ -15,6 +15,7 @@ export default function Feed(props){
             const fetchPosts = async () => {
                 const fetchedPosts = await fetchPostsFromRealtimeDatabase();
                 setPosts(fetchedPosts);
+               
             };
             fetchPosts();
         },[]);

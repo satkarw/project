@@ -1,29 +1,104 @@
-import React, {useState,useEffect, useCallback} from "react";
+import React, { useEffect, useState } from "react";
+import { useLocation } from 'react-router-dom';
+import logo from "../../public/logo.png";
+import { doc, getDoc } from 'firebase/firestore';
+import { saveDataToFirestore, savePostToRealtimeDatabase } from './firebaseConfig';
+import { db } from './firebaseConfig'; // Import Firestore instance
+import Logout from "./Logout";
+import {fetchPostsFromRealtimeDatabase} from './firebaseConfig';
+import { fetchDataFromFirestore } from "./firebaseConfig";
 
 
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { fetchDataFromFirestore } from './firebaseConfig';
-import { Link } from "react-router-dom";
 
-export default function Profile(props){
 
-    return(
-        <>
+export default function Profile() {
+  const location = useLocation();
+  const { userPosts, userID, userProfile} = location.state || {}; // Destructure the state directly
+  
+  console.log(userPosts);
+  const userPostArray = Object.values(userPosts);
+      const shortedPosts = userPostArray.sort((a, b) => b.timestamp - a.timestamp);
 
-        <div className="h-screen w-[100%] flex ">
+  
+  
+  return (
+    <>
+      <div className="h-[20rem] w-[100%] flex relative">
+        <div></div>
+        <div className='h-52 bg-slate-800 w-[100%] flex flex-col items-center justify-center gap-5'></div>
 
-        <div className='h-52  bg-slate-800 w-[100%] flex flex-col items-center justify-center gap-5'>
-
-           <h1 className="text-3xl"> Profile Page Comming Soon</h1>
-            <button className="border px-3 py-2 rounded-lg hover:bg-slate-700">
-                <Link to="/">HOME</Link>
-                </button>
+        <div className="w-fit rounded-full absolute top-[8rem] left-5 border-[0.5rem] border-slate-950">
+          <img src={logo} alt="" className="rounded-full w-40 h-auto overflow-hidden border-4" />
         </div>
+      </div>
 
+      <div className="pl-6">
+        <p className="text-2xl font-bold">{userProfile.ghostName}</p>
+
+      </div>
+
+        {/* ------------------------------- Posts ---------------------*/}
+
+        <div className=" border-b border-gray-700 mt-10 flex justify-center">
+
+        <p className="text-xl font-bold border-b">Posts</p>
 
         </div>
-        
-        </>
-    )
+        {
 
+shortedPosts.map((post,index) =>
+
+            (
+                
+                <div key={post.id || index} className="mt-4 ml-3 mr-3 border border-gray-700 p-3 rounded-lg flex flex-col gap-4 ">
+
+                {/* user name and dp */}
+    
+               
+                <div className="flex gap-2 items-center">
+                    <img src={logo} alt=""  className="rounded-full w-10"/>
+                    <a href="#" className="text-xl">
+                        <strong>{post.ghostName}</strong>
+
+                    </a>
+                    <p className='text-slate-600 text-sm pt-[3px] pl-[5px]'>
+
+                         {new Intl.DateTimeFormat('en-US', {
+                              
+                              month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: false,
+                     }).format(new Date(post.timestamp))}
+                    </p>
+    
+                </div>
+    
+    
+                {/* text content */}
+                <div className="m-3 pb-2 border-b whitespace-pre-wrap">
+                    <p className="md:text-xl text-lg">
+                   {post.postText}
+                    </p>
+                </div>
+
+                <div>
+
+                    <p className='text-slate-600 text-sm ml-5'> likes and comments -- comming soon </p>
+
+                </div>
+                </div>
+            )
+        )
+
+        }
+
+
+
+
+
+
+    </>
+  );
 }

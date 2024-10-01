@@ -60,7 +60,10 @@ export const fetchDataFromFirestore = async (collectionName, userId) => {
   try {
     const q = query(collection(db, collectionName), where("userId", "==", userId));
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => doc.data());
+    const data = querySnapshot.docs.map(doc => doc.data());
+    const dataArray = Object.values(data)
+
+    return data ;
   } catch (error) {
     console.error("Error fetching documents: ", error);
   }
@@ -86,7 +89,9 @@ export const fetchPostsFromRealtimeDatabase = async () => {
 
     if (snapshot.exists()) {
       const posts = snapshot.val(); // Returns an object containing all posts
-      return Object.values(posts); // Reverse the array to have newest first
+      const postsArray = Object.values(posts)
+      const shortedPosts = postsArray.sort((a, b) => b.timestamp - a.timestamp);
+      return Object.values(shortedPosts); 
     } else {
       console.log('No data available');
       return [];

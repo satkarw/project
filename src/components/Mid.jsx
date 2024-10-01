@@ -8,6 +8,8 @@ import Login from "./Login";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { fetchDataFromFirestore } from './firebaseConfig';
 import Profile from "./Profile";
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from './firebaseConfig'; // Import Firestore instance
 
 
 
@@ -20,6 +22,7 @@ export default function Mid(props){
   const auth = getAuth();
   const [userObj,setUserObj]=useState('');
   const [newPost,setNewPost]=useState('');
+
   // const [profileClick, setProfileClick] = useState(false);
   
 
@@ -29,13 +32,14 @@ export default function Mid(props){
        setIfLoggedIn(true)
        
        setUserObj(user);
+     
       
   
       } 
       else {
 
         setIfLoggedIn(false);
-        setUserObj(null);  // Handle when user logs ou
+        setUserObj(null);  // Handle when user logs out
       }
     });
 
@@ -47,12 +51,12 @@ export default function Mid(props){
 
 
   const [userPosts, setUserPosts] =useState([]); 
-
-  useEffect(() => {
+   useEffect(() => {
     // Fetch user data when userObj changes
     if (userObj?.uid) {
       fetchDataFromFirestore('users', userObj.uid)
         .then(data => {
+        
           const userData = data[0]; 
           setUserPosts(userData?.userPosts || []);
         })
@@ -61,15 +65,47 @@ export default function Mid(props){
   }, [userObj?.uid]);
 
 
+  const [userData, setUserData]=useState(null);
+  useEffect(()=>{
+
+    const fetchUserData = async () => {
+
+        if (userObj?.uid){
+
+            try {
+                const userDocRef = doc(db, "users", userObj.uid);
+                const userDocSnap = await getDoc(userDocRef);
+
+                if (userDocSnap.exists()){
+                  const fetchedData = userDocSnap.data();
+                    setUserData(fetchedData);
+                    
+
+                }
+                else {
+                    console.log("no such user document");
+                   
+                }
+
+            } catch(error){
+                console.error("Error: ",  error);
+            }
+        }
+        
+
+    };
+fetchUserData();
+
+  }, [userObj?.uid] );
 
 
-  function handelProfileClick(){
+  // function handelProfileClick(){
 
     
-    props.setProfileClick(!props.profileClick);
-    console.log(props.profileClick);
+  //   props.setProfileClick(!props.profileClick);
+  //   console.log(props.profileClick);
   
-  }
+  // }
 
 
 
@@ -84,6 +120,8 @@ export default function Mid(props){
         userPosts={userPosts}
         setNewPost={setNewPost}
         setUserObj={setUserObj}
+        userProfile={userData} ///this is for the data from firestore
+
       />
       <Feed 
         ifLoggedIn={ifLoggedIn}
