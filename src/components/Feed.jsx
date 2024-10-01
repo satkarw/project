@@ -26,7 +26,7 @@ export default function Feed(props){
         {props.newPost && 
         
          
-        <div className="mt-4 ml-7 mr-3 border border-gray-700 p-3 rounded-lg flex flex-col gap-4 ">
+        <div className="mt-4 ml-3 mr-3 border border-gray-700 p-3 rounded-lg flex flex-col gap-4 ">
 
         {/* user name and dp */}
 

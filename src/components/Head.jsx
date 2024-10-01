@@ -43,7 +43,7 @@ export default function Head(props) {
                     const userData = docSnapshot.data();
                     const existingPosts = userData.userPosts || [];
                     const ghostName = userData.ghostName;
-                    const postId = `${userId}${existingPosts.length + 1}`;
+                    const postId = `${userId}${Date.now()}`;
 
                     const postData = {
                         postId: postId,

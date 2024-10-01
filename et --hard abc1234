@@ -1,0 +1,65 @@
+[33mcommit 92a1d6fe56b1e81cee9e89af730ef29b458c06c2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: satkarw <satkarw@gmail.com>
+Date:   Mon Sep 30 20:44:17 2024 +0545
+
+    very minor changes
+
+[33mcommit a2855d00a08aa770e521de1c1407e5e78811ba26[m
+Author: satkarw <satkarw@gmail.com>
+Date:   Mon Sep 30 20:40:59 2024 +0545
+
+    minor changes
+
+[33mcommit 2cace6dcd200229b3735ba57fb69239ebdf8f572[m
+Author: satkarw <satkarw@gmail.com>
+Date:   Mon Sep 30 20:19:45 2024 +0545
+
+    added profile button functionality and router
+
+[33mcommit e6619f79787ef0be8f76d2efb50f3d17dfbb6ed8[m
+Author: satkarw <satkarw@gmail.com>
+Date:   Thu Sep 19 09:01:25 2024 +0545
+
+    hehe
+
+[33mcommit aadcfb895c2e9ed269979166bf49e9fcfb6f641f[m
+Author: satkarw <satkarw@gmail.com>
+Date:   Thu Sep 19 08:59:13 2024 +0545
+
+    some changes in login signup popup position
+
+[33mcommit 3153cb676d002496984f546c868c00798a639a02[m
+Author: satkarw <satkarw@gmail.com>
+Date:   Tue Sep 17 20:21:06 2024 +0545
+
+    fixed login problem and added logout
+
+[33mcommit 9f29f5d2c40e41f0ecee8a6483fa9da55ece61d4[m
+Author: satkarw <satkarw@gmail.com>
+Date:   Thu Sep 5 09:29:32 2024 +0545
+
+    Update: Fixed sidebar issue for small screens
+
+[33mcommit a7b0b74e71e4b1838d8c4ae5a2d5e698d1f4f9b7[m
+Author: satkarw <satkarw@gmail.com>
+Date:   Thu Sep 5 09:24:29 2024 +0545
+
+    Update: Fixed sidebar issue for small screens
+
+[33mcommit c9ddf9965fb28ba297bd4d7edf87390d564436fd[m
+Author: satkarw <satkarw@gmail.com>
+Date:   Wed Aug 21 11:46:32 2024 +0545
+
+    Fix Vite configuration to resolve Firebase module import issues
+
+[33mcommit bfc4db0f694c8a9c82a32cdd6421733948f62b67[m
+Author: satkarw <satkarw@gmail.com>
+Date:   Wed Aug 21 11:36:43 2024 +0545
+
+    Update Firebase configuration and fix build issues
+
+[33mcommit 375a1ef1c3b1121f09e47f611e9cac047be52d6f[m
+Author: satkarw <satkarw@gmail.com>
+Date:   Wed Aug 21 10:23:26 2024 +0545
+
+    first commit
