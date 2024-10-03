@@ -1,25 +1,11 @@
 import React,{useEffect,useState} from 'react'
-import {fetchPostsFromRealtimeDatabase} from './firebaseConfig';
-
 import logo from "../../public/logo.png";
 
 
 
 export default function Feed(props){
 
-        const [posts, setPosts] = useState([]);
-        
-        
-        
-        useEffect(() => {
-            const fetchPosts = async () => {
-                const fetchedPosts = await fetchPostsFromRealtimeDatabase();
-                setPosts(fetchedPosts);
-               
-            };
-            fetchPosts();
-        },[]);
-
+const posts = props.posts;
 
     return (
         <>

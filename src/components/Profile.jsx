@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from 'react-router-dom';
 import logo from "../../public/logo.png";
-import { doc, getDoc } from 'firebase/firestore';
-import { saveDataToFirestore, savePostToRealtimeDatabase } from './firebaseConfig';
-import { db } from './firebaseConfig'; // Import Firestore instance
-import Logout from "./Logout";
-import {fetchPostsFromRealtimeDatabase} from './firebaseConfig';
-import { fetchDataFromFirestore } from "./firebaseConfig";
+// import { doc, getDoc } from 'firebase/firestore';
+// import { saveDataToFirestore, savePostToRealtimeDatabase } from './firebaseConfig';
+// import { db } from './firebaseConfig'; // Import Firestore instance
+// import Logout from "./Logout";
+// import {fetchPostsFromRealtimeDatabase} from './firebaseConfig';
+// import { fetchDataFromFirestore } from "./firebaseConfig";
 
 
 
 
 export default function Profile() {
   const location = useLocation();
-  const { userPosts, userID, userProfile} = location.state || {}; // Destructure the state directly
+  const { userPosts, userID, userProfile } = location.state || {}; // Destructure the state directly
   
   console.log(userPosts);
   const userPostArray = Object.values(userPosts);

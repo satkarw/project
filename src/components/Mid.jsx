@@ -1,12 +1,13 @@
 import React, {useState,useEffect, useCallback} from "react";
 
 import Head from "./Head";
-import Feed from './Feed'
+import Feed from './Feed';
 import Sign from "./Sign";
 import Login from "./Login";
 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { fetchDataFromFirestore } from './firebaseConfig';
+import {fetchPostsFromRealtimeDatabase} from './firebaseConfig';
 import Profile from "./Profile";
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from './firebaseConfig'; // Import Firestore instance
@@ -47,6 +48,16 @@ export default function Mid(props){
 
   },[auth]);
   
+
+  const [posts, setPosts] = useState([]);       
+  useEffect(() => {
+      const fetchPosts = async () => {
+          const fetchedPosts = await fetchPostsFromRealtimeDatabase();
+          setPosts(fetchedPosts);
+         
+      };
+      fetchPosts();
+  },[]);
 
 
 
@@ -99,14 +110,6 @@ fetchUserData();
   }, [userObj?.uid] );
 
 
-  // function handelProfileClick(){
-
-    
-  //   props.setProfileClick(!props.profileClick);
-  //   console.log(props.profileClick);
-  
-  // }
-
 
 
   return (
@@ -126,6 +129,7 @@ fetchUserData();
       <Feed 
         ifLoggedIn={ifLoggedIn}
         newPost={newPost}
+        posts={posts}
       />
       { logInState && (logInState === 'signin' ? 
         <Sign setLoginState={setLoginState} setIfLoggedIn={setIfLoggedIn} />
