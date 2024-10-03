@@ -98,7 +98,7 @@ export default function Head(props) {
 
                         
                             <button className="border px-3 rounded-md hover:bg-slate-800 " >
-                               <Link to="/profile"
+                               <Link to={`/profile/${props.userId}`}
                                state={{userPosts: props.userPosts, userID:props.userId , userProfile: props.userProfile} }
                                
                                >Profile</Link>

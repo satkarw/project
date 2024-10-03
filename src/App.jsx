@@ -1,5 +1,5 @@
 import React from 'react';
-import {Routes, Route} from 'react-router-dom';
+import {BrowserRouter as  Router,Routes, Route} from 'react-router-dom';
 import { useState } from 'react';
 import Left from './components/Left';
 import Mid from './components/Mid';
@@ -17,6 +17,7 @@ function App() {
 
     <>
       {/* Main body */}
+      
       <div className='bg-slate-950 text-white h-fit flex justify-center pt-5 '>
 
         <div className='
@@ -38,9 +39,9 @@ function App() {
 
               <Route path='/' element={<Mid/>} />
 
-              <Route path="/profile" element={<Profile />} />
+              <Route path="/profile/:userId" element={<Profile />} />
            
-
+              {/* <Route path="*" element={<NotFound />} /> */}
              
 
             </Routes>
@@ -53,6 +54,7 @@ function App() {
         </div>
         
       </div>
+ 
     </>
   );
 }

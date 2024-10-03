@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import logo from "../../public/logo.png";
+import { fetchUserProfile } from "./firebaseConfig";
 // import { doc, getDoc } from 'firebase/firestore';
 // import { saveDataToFirestore, savePostToRealtimeDatabase } from './firebaseConfig';
 // import { db } from './firebaseConfig'; // Import Firestore instance
@@ -13,16 +14,30 @@ import logo from "../../public/logo.png";
 
 export default function Profile() {
   const location = useLocation();
-  const { userPosts, userID, userProfile } = location.state || {}; // Destructure the state directly
+  const {userId}=useParams();
   
-  console.log(userPosts);
-  const userPostArray = Object.values(userPosts);
-      const shortedPosts = userPostArray.sort((a, b) => b.timestamp - a.timestamp);
+  const [profileData, setProfileData]=useState(null);
+  
+  useEffect(() => {
+    if (location.state) {
+      setProfileData(location.state);
+    } else if (userId) {
+      // Fetch profile data if not available in state
+      fetchUserProfile(userId).then(setProfileData);
+    }
+  }, [location, userId]);
+
+  if (!profileData) return <div>Loading...</div>;
+
+  const { userPosts, userProfile } = profileData;
+  const userPostArray = Object.values(userPosts || {});
+  const sortedPosts = userPostArray.sort((a, b) => b.timestamp - a.timestamp);
 
   
   
   return (
     <>
+   
       <div className="h-[20rem] w-[100%] flex relative">
         <div></div>
         <div className='h-52 bg-slate-800 w-[100%] flex flex-col items-center justify-center gap-5'></div>
@@ -46,7 +61,7 @@ export default function Profile() {
         </div>
         {
 
-shortedPosts.map((post,index) =>
+        sortedPosts.map((post,index) =>
 
             (
                 
@@ -90,15 +105,9 @@ shortedPosts.map((post,index) =>
                 </div>
                 </div>
             )
-        )
+          )
 
         }
-
-
-
-
-
-
     </>
   );
 }

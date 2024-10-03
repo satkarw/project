@@ -101,3 +101,31 @@ export const fetchPostsFromRealtimeDatabase = async () => {
     return [];
   }
 };
+
+
+export const fetchUserProfile = async (userId) => {
+  try {
+    const userDocRef = doc(db, "users", userId);
+    const userDocSnap= await getDoc(userDocRef);
+     
+    if ( userDocSnap.exists()) {
+       const userData = userDocSnap.data();
+       return {
+        userPosts: userData.userPosts || [],
+        userProfile : {
+          ghostName: userData.ghostName,
+
+        }
+       };
+    }
+
+    else {
+      console.log("no such user document");
+      return null;
+    }
+  } 
+  catch (error) {
+    console.error("error: ", error);
+    return null;
+  }
+};
