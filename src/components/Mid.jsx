@@ -1,19 +1,13 @@
-import React, {useState,useEffect, useCallback} from "react";
-
+import React, {useState, useEffect} from "react";
 import Head from "./Head";
 import Feed from './Feed';
 import Sign from "./Sign";
 import Login from "./Login";
-
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { fetchDataFromFirestore } from './firebaseConfig';
-import {fetchPostsFromRealtimeDatabase} from './firebaseConfig';
-import Profile from "./Profile";
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from './firebaseConfig'; // Import Firestore instance
-
-
-
+import { fetchPostsFromFirestore } from './firebaseConfig';  // Import the new fetch function for Firestore
+import { fetchDataFromFirestore } from "./firebaseConfig";
+import { doc, getDoc, setDoc, addDoc } from 'firebase/firestore'; // Add Firestore functions
+import { db } from './firebaseConfig';
 
 
 export default function Mid(props){
@@ -50,14 +44,19 @@ export default function Mid(props){
   
 
   const [posts, setPosts] = useState([]);       
+  
   useEffect(() => {
-      const fetchPosts = async () => {
-          const fetchedPosts = await fetchPostsFromRealtimeDatabase();
-          setPosts(fetchedPosts);
-         
-      };
-      fetchPosts();
-  },[]);
+    const fetchPosts = async () => {
+      try {
+        const fetchedPosts = await fetchPostsFromFirestore(); // Fetch from Firestore
+        setPosts(fetchedPosts);  // Set the posts state with fetched posts
+      } catch (error) {
+        console.error('Error fetching posts from Firestore:', error);
+      }
+    };
+    fetchPosts();
+  }, []);
+
 
 
 

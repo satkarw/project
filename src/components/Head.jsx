@@ -1,7 +1,7 @@
 import React from "react";
 import logo from "../../public/logo.png";
-import { doc, getDoc } from 'firebase/firestore';
-import { saveDataToFirestore, savePostToRealtimeDatabase } from './firebaseConfig';
+import { doc, getDoc, addDoc, collection } from 'firebase/firestore';
+import { saveDataToFirestore } from './firebaseConfig';
 import { db } from './firebaseConfig'; // Import Firestore instance
 import Logout from "./Logout";
 import { Link } from "react-router-dom";
@@ -42,7 +42,6 @@ export default function Head(props) {
 
                 if (docSnapshot.exists()) {
                     const userData = docSnapshot.data();
-                    const existingPosts = userData.userPosts || [];
                     const ghostName = userData.ghostName;
                     const postId = `${userId}${Date.now()}`;
 
@@ -54,33 +53,27 @@ export default function Head(props) {
                         timestamp: Date.now(),
                     };
 
-                    // Append new post to existing posts
-                    const updatedPosts = [...existingPosts, postData];
-
-                    // Save updated posts to Firestore
-                    await saveDataToFirestore('users', { userPosts: updatedPosts }, userId);
+                    // Save new post to Firestore 'posts' collection
+                    const postsCollectionRef = collection(db, 'posts');
+                    await addDoc(postsCollectionRef, postData);
 
                     // Clear textarea
                     document.getElementById('textInput').value = '';
 
-                    // Save to Realtime Database
-                    await savePostToRealtimeDatabase(postData);
-                    console.log('Post saved to Realtime Database');
+                    // Update the state in parent component (e.g., Feed component)
                     props.setNewPost(postData);
 
+                    console.log('Post saved to Firestore');
                 } else {
-                    console.error('No such document!');
+                    console.error('No such user document!');
                 }
             } catch (error) {
-                console.error('Error fetching document:', error);
+                console.error('Error posting to Firestore:', error);
             }
         } else {
             alert('Please enter some text before posting.');
         }
     }
-
-    
-
 
     return (
         <div>
@@ -93,23 +86,15 @@ export default function Head(props) {
                 <div className="ml-auto mr-2">
                     {isLoggedIn() ? (
                         <div className="flex gap-2">
+                            <button className="border px-3 rounded-md hover:bg-slate-800">
 
-                {/* ------------------------Profile Button---------------------------------------------------------- */}
-
-                        
-                            <button className="border px-3 rounded-md hover:bg-slate-800 " >
+                                {/*-----------------profile-------------------------------------------*/}
                                <Link to={`/profile/${props.userId}`}
-                               state={{userPosts: props.userPosts, userID:props.userId , userProfile: props.userProfile} }
-                               
-                               >Profile</Link>
+                                     state={{userPosts: props.userPosts, userID:props.userId , userProfile: props.userProfile}}>
+                                    Profile
+                                </Link>
                             </button>
-
-
-
-                            <Logout 
-                                setIfLoggedIn={props.setIfLoggedIn} 
-                                setUserObj={props.setUserObj} 
-                            />
+                            <Logout setIfLoggedIn={props.setIfLoggedIn} setUserObj={props.setUserObj} />
                         </div>
                     ) : (
                         <div className="flex gap-5">

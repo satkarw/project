@@ -3,6 +3,8 @@ import { getAuth, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthPro
 import { getFirestore, collection, addDoc, getDocs, query, where, doc, setDoc } from "firebase/firestore";
 import { getDatabase, ref, set } from "firebase/database"; 
 import { orderByChild, get } from "firebase/database";
+import {orderBy } from 'firebase/firestore';
+
 
 // Your Firebase configuration
 const firebaseConfig = {
@@ -127,5 +129,26 @@ export const fetchUserProfile = async (userId) => {
   catch (error) {
     console.error("error: ", error);
     return null;
+  }
+};
+
+
+
+// Fetch posts from Firestore and order them by timestamp
+export const fetchPostsFromFirestore = async () => {
+  try {
+    const postsCollectionRef = collection(db, 'posts'); // Reference to 'posts' collection
+    const postsQuery = query(postsCollectionRef, orderBy('timestamp', 'desc')); // Query to order by timestamp (descending)
+    const querySnapshot = await getDocs(postsQuery);
+
+    const postsArray = [];
+    querySnapshot.forEach((doc) => {
+      postsArray.push(doc.data());
+    });
+
+    return postsArray; // Return posts in descending order by timestamp
+  } catch (error) {
+    console.error('Error fetching posts from Firestore:', error);
+    return [];
   }
 };
