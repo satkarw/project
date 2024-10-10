@@ -87,15 +87,15 @@ export default function Head(props) {
                 console.error('Error posting to Firestore:', error);
             }
         } else {
-           handelNoTextPost();
+        handelNoTextPost();
         }
     }
 
     return (
-        <div relative w-full>
+        <div>
             {/* Header */}
-            <div className=" ">   
-            <div className="flex justify-center items-center border-b b order-gray-700 pb-5 pl-5">
+            <div >   
+            <div className="flex justify-center items-center border-b border-gray-700 order-gray-700 pb-5 pl-5">
                 <button onClick={reload}>
                     <img src={logo} alt="Logo" className="w-10 pr-3 rounded-lg" />
                 </button>
@@ -106,10 +106,10 @@ export default function Head(props) {
                             <button className="border px-3 rounded-md hover:bg-slate-800">
 
                                 {/*-----------------profile-------------------------------------------*/}
-                               <Link to={`/profile/${props.userId}`}
+                            <Link to={`/profile/${props.userId}`}
                                     state={{userPosts: props.userPosts, userID:props.userId , userProfile: props.userProfile, mainUserId:props.userId}}>
                                     Profile
-                                </Link>
+                            </Link>
                             </button>
                             <Logout setIfLoggedIn={props.setIfLoggedIn} setUserObj={props.setUserObj} />
                         </div>

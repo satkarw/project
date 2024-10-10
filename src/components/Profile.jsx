@@ -106,7 +106,7 @@ export default function Profile(props) {
                     onClick={() => props.deletePost(post.postId, post.userId)}
                     className="px-2 rounded-md hover:bg-slate-700"
                   >
-                    <p className="font-extrabold ">:</p>
+                    <p className="font-extrabold ">&#8942;</p>
                   </button>
                 }
               </div>
