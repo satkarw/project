@@ -1,10 +1,24 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore, collection, addDoc, getDocs, query, where, doc, setDoc } from "firebase/firestore";
-import { getDatabase, ref, set } from "firebase/database"; 
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  doc,
+  setDoc,
+  getDoc
+} from "firebase/firestore";
+import { getDatabase, ref, set } from "firebase/database";
 import { orderByChild, get } from "firebase/database";
-import {orderBy } from 'firebase/firestore';
-
+import { orderBy } from "firebase/firestore";
 
 // Your Firebase configuration
 const firebaseConfig = {
@@ -14,7 +28,7 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 // Initialize Firebase
@@ -23,14 +37,18 @@ const app = initializeApp(firebaseConfig);
 // Initialize services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const database = getDatabase(app); 
+export const database = getDatabase(app);
 // Setup providers for Google Authentication
 export const googleProvider = new GoogleAuthProvider();
 
 // Authentication functions
 export const signUpWithEmail = async (email, password) => {
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
     return userCredential.user; // This contains the user ID and other user information
   } catch (error) {
     console.error("Error signing up with email and password:", error);
@@ -60,22 +78,25 @@ export const saveDataToFirestore = async (collectionName, data, userId) => {
 
 export const fetchDataFromFirestore = async (collectionName, userId) => {
   try {
-    const q = query(collection(db, collectionName), where("userId", "==", userId));
+    const q = query(
+      collection(db, collectionName),
+      where("userId", "==", userId)
+    );
     const querySnapshot = await getDocs(q);
-    const data = querySnapshot.docs.map(doc => doc.data());
-    const dataArray = Object.values(data)
+    const data = querySnapshot.docs.map((doc) => doc.data());
+    const dataArray = Object.values(data);
 
-    return data ;
+    return data;
   } catch (error) {
     console.error("Error fetching documents: ", error);
   }
 };
 
-// Saving to Realtime Database 
+// Saving to Realtime Database
 export const savePostToRealtimeDatabase = async (postData) => {
   try {
-    const postRef = ref(database, `posts/${postData.postId}`);  // Create a reference for the post using its ID
-    await set(postRef, postData);  // Save the post data at the specified reference
+    const postRef = ref(database, `posts/${postData.postId}`); // Create a reference for the post using its ID
+    await set(postRef, postData); // Save the post data at the specified reference
     console.log("Post saved to Realtime Database");
   } catch (error) {
     console.error("Error saving post to Realtime Database:", error);
@@ -85,60 +106,53 @@ export const savePostToRealtimeDatabase = async (postData) => {
 export const fetchPostsFromRealtimeDatabase = async () => {
   try {
     const db = getDatabase();
-    const postsRef = ref(db, 'posts'); // Reference to the 'posts' folder
-    const postsQuery = query(postsRef, orderByChild('timestamp')); // Query to order by timestamp
+    const postsRef = ref(db, "posts"); // Reference to the 'posts' folder
+    const postsQuery = query(postsRef, orderByChild("timestamp")); // Query to order by timestamp
     const snapshot = await get(postsQuery);
 
     if (snapshot.exists()) {
       const posts = snapshot.val(); // Returns an object containing all posts
-      const postsArray = Object.values(posts)
+      const postsArray = Object.values(posts);
       const shortedPosts = postsArray.sort((a, b) => b.timestamp - a.timestamp);
-      return Object.values(shortedPosts); 
+      return Object.values(shortedPosts);
     } else {
-      console.log('No data available');
+      console.log("No data available");
       return [];
     }
   } catch (error) {
-    console.error('Error fetching posts:', error);
+    console.error("Error fetching posts:", error);
     return [];
   }
 };
 
-
 export const fetchUserProfile = async (userId) => {
   try {
     const userDocRef = doc(db, "users", userId);
-    const userDocSnap= await getDoc(userDocRef);
-     
-    if ( userDocSnap.exists()) {
-       const userData = userDocSnap.data();
-       return {
+    const userDocSnap = await getDoc(userDocRef);
+
+    if (userDocSnap.exists()) {
+      const userData = userDocSnap.data();
+      return {
         userPosts: userData.userPosts || [],
-        userProfile : {
+        userProfile: {
           ghostName: userData.ghostName,
-
-        }
-       };
-    }
-
-    else {
+        },
+      };
+    } else {
       console.log("no such user document");
       return null;
     }
-  } 
-  catch (error) {
+  } catch (error) {
     console.error("error: ", error);
     return null;
   }
 };
 
-
-
 // Fetch posts from Firestore and order them by timestamp
 export const fetchPostsFromFirestore = async () => {
   try {
-    const postsCollectionRef = collection(db, 'posts'); // Reference to 'posts' collection
-    const postsQuery = query(postsCollectionRef, orderBy('timestamp', 'desc')); // Query to order by timestamp (descending)
+    const postsCollectionRef = collection(db, "posts"); // Reference to 'posts' collection
+    const postsQuery = query(postsCollectionRef, orderBy("timestamp", "desc")); // Query to order by timestamp (descending)
     const querySnapshot = await getDocs(postsQuery);
 
     const postsArray = [];
@@ -148,7 +162,7 @@ export const fetchPostsFromFirestore = async () => {
 
     return postsArray; // Return posts in descending order by timestamp
   } catch (error) {
-    console.error('Error fetching posts from Firestore:', error);
+    console.error("Error fetching posts from Firestore:", error);
     return [];
   }
 };

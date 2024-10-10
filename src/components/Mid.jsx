@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import Head from "./Head";
 import Feed from './Feed';
 import Sign from "./Sign";
@@ -10,27 +10,30 @@ import { doc, getDoc, setDoc, addDoc } from 'firebase/firestore'; // Add Firesto
 import { db } from './firebaseConfig';
 
 
-export default function Mid(props){
+export default function Mid(props) {
 
-  const [logInState,setLoginState] = useState('');
+  const [logInState, setLoginState] = useState('');
   const [ifLoggedIn, setIfLoggedIn] = useState(false)
   const auth = getAuth();
-  const [userObj,setUserObj]=useState('');
-  const [newPost,setNewPost]=useState('');
-
+  const [userObj, setUserObj] = useState('');
+  const [newPost, setNewPost] = useState('');
+//
   // const [profileClick, setProfileClick] = useState(false);
-  
 
-  useEffect(() =>{
-    const unsubscribe =   onAuthStateChanged(auth, (user) => {
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-       setIfLoggedIn(true)
-       
-       setUserObj(user);
-     
-      
-  
-      } 
+        setIfLoggedIn(true)
+
+        setUserObj(user);
+
+
+
+
+
+
+      }
       else {
 
         setIfLoggedIn(false);
@@ -40,11 +43,11 @@ export default function Mid(props){
 
     return () => unsubscribe();
 
-  },[auth]);
-  
+  }, [auth]);
 
-  const [posts, setPosts] = useState([]);       
-  
+
+  const [posts, setPosts] = useState([]);
+
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -57,17 +60,30 @@ export default function Mid(props){
     fetchPosts();
   }, []);
 
+  if (posts) {
+    const existingPosts = props.profilePosts;
+    posts.map((post) => {
+      if (post.userId === userObj.uid) {
+        existingPosts.push(post); 
+      }
+    })
+
+    props.setProfilePosts(existingPosts);
+
+  }
 
 
 
-  const [userPosts, setUserPosts] =useState([]); 
-   useEffect(() => {
+
+
+  const [userPosts, setUserPosts] = useState([]);
+  useEffect(() => {
     // Fetch user data when userObj changes
     if (userObj?.uid) {
       fetchDataFromFirestore('users', userObj.uid)
         .then(data => {
-        
-          const userData = data[0]; 
+
+          const userData = data[0];
           setUserPosts(userData?.userPosts || []);
         })
         .catch(error => console.error('Error fetching user posts:', error));
@@ -75,45 +91,45 @@ export default function Mid(props){
   }, [userObj?.uid]);
 
 
-  const [userData, setUserData]=useState(null);
-  useEffect(()=>{
+  const [userData, setUserData] = useState(null);
+  useEffect(() => {
 
     const fetchUserData = async () => {
 
-        if (userObj?.uid){
+      if (userObj?.uid) {
 
-            try {
-                const userDocRef = doc(db, "users", userObj.uid);
-                const userDocSnap = await getDoc(userDocRef);
+        try {
+          const userDocRef = doc(db, "users", userObj.uid);
+          const userDocSnap = await getDoc(userDocRef);
 
-                if (userDocSnap.exists()){
-                  const fetchedData = userDocSnap.data();
-                    setUserData(fetchedData);
-                    
+          if (userDocSnap.exists()) {
+            const fetchedData = userDocSnap.data();
+            setUserData(fetchedData);
 
-                }
-                else {
-                    console.log("no such user document");
-                   
-                }
 
-            } catch(error){
-                console.error("Error: ",  error);
-            }
+          }
+          else {
+            console.log("no such user document");
+
+          }
+
+        } catch (error) {
+          console.error("Error: ", error);
         }
-        
+      }
+
 
     };
-fetchUserData();
+    fetchUserData();
 
-  }, [userObj?.uid] );
+  }, [userObj?.uid]);
 
 
 
 
   return (
     <div className={`relative flex flex-col`}>
-      <Head 
+      <Head
         setLoginState={setLoginState}
         ifLoggedIn={ifLoggedIn}
         setIfLoggedIn={setIfLoggedIn}
@@ -125,12 +141,14 @@ fetchUserData();
         userProfile={userData} ///this is for the data from firestore
 
       />
-      <Feed 
+      <Feed
         ifLoggedIn={ifLoggedIn}
         newPost={newPost}
         posts={posts}
+        userId={userObj?.uid}
+        deletePost={props.deletePost}
       />
-      { logInState && (logInState === 'signin' ? 
+      {logInState && (logInState === 'signin' ?
         <Sign setLoginState={setLoginState} setIfLoggedIn={setIfLoggedIn} />
         :
         <Login setLoginState={setLoginState} setIfLoggedIn={setIfLoggedIn} />

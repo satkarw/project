@@ -1,7 +1,7 @@
 import React from "react";
 import logo from "../../public/logo.png";
 import { doc, getDoc, addDoc, collection } from 'firebase/firestore';
-import { saveDataToFirestore } from './firebaseConfig';
+
 import { db } from './firebaseConfig'; // Import Firestore instance
 import Logout from "./Logout";
 import { Link } from "react-router-dom";
@@ -24,7 +24,7 @@ export default function Head(props) {
     // Handle post submission without logging in
     function handleNotLoggedInPostClick() {
         const loginFirstText = document.getElementById('loginFirstText');
-        loginFirstText.classList.remove('hidden');
+        loginFirstText.classList.remove('hidden'); 
         setTimeout(() => {
             loginFirstText.classList.add('hidden');
         }, 2000);
@@ -60,7 +60,7 @@ export default function Head(props) {
                     // Clear textarea
                     document.getElementById('textInput').value = '';
 
-                    // Update the state in parent component (e.g., Feed component)
+                    // Update the state in parent component 
                     props.setNewPost(postData);
 
                     console.log('Post saved to Firestore');
@@ -90,7 +90,7 @@ export default function Head(props) {
 
                                 {/*-----------------profile-------------------------------------------*/}
                                <Link to={`/profile/${props.userId}`}
-                                     state={{userPosts: props.userPosts, userID:props.userId , userProfile: props.userProfile}}>
+                                    state={{userPosts: props.userPosts, userID:props.userId , userProfile: props.userProfile, mainUserId:props.userId}}>
                                     Profile
                                 </Link>
                             </button>

@@ -9,6 +9,12 @@ import Profile from './components/Profile';
 function App() {
 
   // const [profileClick, setProfileClick] = useState(false);
+  const deletePost = (postId,userId) =>{
+    console.log("the post is deleted : ", postId," ",userId);
+  }
+
+  const [profilePosts,setProfilePosts]=useState([null]);
+
 
 
   return (
@@ -37,9 +43,20 @@ function App() {
 
             <Routes>
 
-              <Route path='/' element={<Mid/>} />
+              <Route path='/' element={
+                
+                <Mid
+                setProfilePosts={setProfilePosts} 
+                profilePosts={profilePosts} 
+              deletePost={deletePost}
+            
+              />} />
 
-              <Route path="/profile/:userId" element={<Profile />} />
+              <Route path="/profile/:userId" element={<Profile 
+              deletePost={deletePost}
+              profilePosts={profilePosts}
+             
+              />} />
            
               {/* <Route path="*" element={<NotFound />} /> */}
              
