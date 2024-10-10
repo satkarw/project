@@ -1,16 +1,27 @@
 import React from "react";
+import { useState } from "react";
+import { CSSTransition } from "react-transition-group";
 import logo from "../../public/logo.png";
 import { doc, getDoc, addDoc, collection } from 'firebase/firestore';
 
 import { db } from './firebaseConfig'; // Import Firestore instance
 import Logout from "./Logout";
 import { Link } from "react-router-dom";
+import './transition.css'
 
 
 export default function Head(props) {
 
+    const [showLoginFirst, setShowLoginFirst] = useState(false);
+    const [showEmptyPost, setShowEmptyPost] = useState(false);
+
+
     function isLoggedIn() {
         return props.ifLoggedIn;
+    }
+
+    function reload(){
+        window.location.reload();
     }
 
     function handelLogin() {
@@ -21,14 +32,19 @@ export default function Head(props) {
         props.setLoginState('signin');
     }
 
-    // Handle post submission without logging in
     function handleNotLoggedInPostClick() {
-        const loginFirstText = document.getElementById('loginFirstText');
-        loginFirstText.classList.remove('hidden'); 
+        setShowLoginFirst(true); // Trigger the transition
         setTimeout(() => {
-            loginFirstText.classList.add('hidden');
+            setShowLoginFirst(false); // Hide after 2 seconds
         }, 2000);
     }
+
+    function handelNoTextPost(){
+        setShowEmptyPost(true); // Trigger the transition
+        setTimeout(() => {
+            setShowEmptyPost(false); // Hide after 2 seconds
+        }, 2000);
+    }   
 
     // Handle posting when logged in
     async function handlePost() {
@@ -71,17 +87,18 @@ export default function Head(props) {
                 console.error('Error posting to Firestore:', error);
             }
         } else {
-            alert('Please enter some text before posting.');
+           handelNoTextPost();
         }
     }
 
     return (
-        <div>
+        <div relative w-full>
             {/* Header */}
-            <div className="flex justify-center items-center border-b border-gray-700 pb-5 pl-5">
-                <a href="#">
+            <div className=" ">   
+            <div className="flex justify-center items-center border-b b order-gray-700 pb-5 pl-5">
+                <button onClick={reload}>
                     <img src={logo} alt="Logo" className="w-10 pr-3 rounded-lg" />
-                </a>
+                </button>
                 <a href="#" className="text-xl hover hover:underline">Your Feed</a>
                 <div className="ml-auto mr-2">
                     {isLoggedIn() ? (
@@ -108,9 +125,10 @@ export default function Head(props) {
                     )}
                 </div>
             </div>
+            </div>
 
             {/* Post Box */}
-            <div className="border-b border-gray-700 py-5 pl-5">
+            <div className="border-b border-gray-700 py-5 pl-5 transition-all duration-300 ease-in-out">
                 <div className="flex gap-6">
                     <img src={logo} alt="" className="w-10 h-10 rounded-full" />
                     <textarea 
@@ -123,10 +141,10 @@ export default function Head(props) {
                             e.target.style.height = `${e.target.scrollHeight}px`;
                         }}
                     />
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-col gap-2 transition">
                         {isLoggedIn() ? (
                             <button 
-                                className="bg-slate-900 hover:bg-slate-700 text-white px-5 h-fit py-3 border rounded-lg mr-2"
+                                className="bg-slate-950 hover:bg-slate-800 text-white px-5 h-fit py-3 border rounded-lg mr-2"
                                 onClick={handlePost}
                             >
                                 Post
@@ -140,6 +158,25 @@ export default function Head(props) {
                             </button>
                         )}
                         <p className="text-red-500 hidden" id='loginFirstText'>login first</p>
+                        <p className="text-red-500 hidden" id='emptyPostText'>Empty Post</p>
+
+                        <CSSTransition
+                            in={showLoginFirst}
+                            timeout={300}
+                            classNames="fade"
+                            unmountOnExit
+                        >
+                            <p className="text-red-500" id='loginFirstText'>login first</p>
+                        </CSSTransition>
+
+                        <CSSTransition
+                            in={showEmptyPost}
+                            timeout={300}
+                            classNames="fade"
+                            unmountOnExit
+                        >
+                            <p className="text-red-500" id='emptyPostText'>Empty Post</p>
+                        </CSSTransition>
                     </div>
                 </div>
             </div>

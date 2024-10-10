@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 export default function Feed(props) {
   const posts = props.posts;
-
+  console.log(props.userId)
   
 
   function threeDots(postId, userId) {
@@ -31,6 +31,16 @@ export default function Feed(props) {
                                     <strong>{props.newPost.ghostName}</strong>
                 </Link>
             </button>
+
+            <p className="text-slate-600 text-sm pt-[3px] pl-[5px]">
+              {new Intl.DateTimeFormat("en-US", {
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+              }).format(new Date(propnewPost.timestamp))}
+            </p>
 
           
 
@@ -84,7 +94,7 @@ export default function Feed(props) {
                       className="px-2 rounded-md hover:bg-slate-700"
                       onClick={() => threeDots(post.postId, post.userId)}
                     >
-                      <p className="font-extrabold ">:</p>
+                      <p className="font-extrabold ">&#8942;</p>
                     </button>
                     <div></div>
                   </>

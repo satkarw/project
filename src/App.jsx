@@ -24,11 +24,11 @@ function App() {
     <>
       {/* Main body */}
       
-      <div className='bg-slate-950 text-white h-fit flex justify-center pt-5 '>
+      <div className='bg-black text-white h-fit flex justify-center pt-5 '>
 
         <div className='
 
-        bg-slate-950 text-white 
+        bg-black text-white 
         h-screen grid grid-cols-[minmax(0,800px)]
          md:grid-cols-[50px_minmax(0,_800px)]
          '>

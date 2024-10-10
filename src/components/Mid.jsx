@@ -63,7 +63,7 @@ export default function Mid(props) {
   if (posts) {
     const existingPosts = props.profilePosts;
     posts.map((post) => {
-      if (post.userId === userObj.uid) {
+      if (post.userId === userObj?.uid) {
         existingPosts.push(post); 
       }
     })
@@ -128,7 +128,7 @@ export default function Mid(props) {
 
 
   return (
-    <div className={`relative flex flex-col`}>
+    <div className={`relative flex flex-col w-full`}>
       <Head
         setLoginState={setLoginState}
         ifLoggedIn={ifLoggedIn}

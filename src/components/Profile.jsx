@@ -18,7 +18,7 @@ export default function Profile(props) {
   console.log(mainUserId);
 
  
-     
+      
   const [profileData, setProfileData] = useState(null);
   
 
@@ -53,6 +53,8 @@ export default function Profile(props) {
 
   return (
     <>
+
+    
       <div className="h-[20rem] w-[100%] flex relative">
         <div></div>
         <div className="h-52 bg-slate-800 w-[100%] flex flex-col items-center justify-center gap-5"></div>
