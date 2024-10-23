@@ -27,7 +27,7 @@ export default function Feed(props) {
             <img src={logo} alt="" className="rounded-full w-10" />
             <button href="#" className="text-xl">
                 <Link to={`/profile/${props.newPost.userId}`}
-                                    state={{ userID:props.newpost.userId, userProfile:{}, userPosts: {}, mainUserId:props.userId} }>
+                                    state={{ userID:props.newPost.userId, userProfile:{}, userPosts: {}, mainUserId:props.userId} }>
                                     <strong>{props.newPost.ghostName}</strong>
                 </Link>
             </button>
@@ -39,7 +39,7 @@ export default function Feed(props) {
                 hour: "2-digit",
                 minute: "2-digit",
                 hour12: false,
-              }).format(new Date(propnewPost.timestamp))}
+              }).format(new Date(props.newPost.timestamp))}
             </p>
               
           

@@ -2,7 +2,9 @@ import React from "react";
 import { useState } from "react";
 import { CSSTransition } from "react-transition-group";
 import logo from "../../public/logo.png";
-import { doc, getDoc, addDoc, collection } from 'firebase/firestore';
+import { doc, getDoc,getDocs, addDoc, collection } from 'firebase/firestore';
+import { updateDoc, arrayUnion } from 'firebase/firestore';
+
 
 import { db } from './firebaseConfig'; // Import Firestore instance
 import Logout from "./Logout";
@@ -45,6 +47,8 @@ export default function Head(props) {
             setShowEmptyPost(false); // Hide after 2 seconds
         }, 2000);
     }   
+ 
+    
 
     // Handle posting when logged in
     async function handlePost() {
@@ -53,7 +57,7 @@ export default function Head(props) {
 
         if (postText.trim() !== '') {
             try {
-                const docRef = doc(db, 'users', userId);
+                const docRef = doc(db, 'users', userId); // this refers to that specific user's object in firestore
                 const docSnapshot = await getDoc(docRef);
 
                 if (docSnapshot.exists()) {
@@ -73,6 +77,7 @@ export default function Head(props) {
                     const postsCollectionRef = collection(db, 'posts');
                     await addDoc(postsCollectionRef, postData);
 
+                    
                     // Clear textarea
                     document.getElementById('textInput').value = '';
 
@@ -80,6 +85,16 @@ export default function Head(props) {
                     props.setNewPost(postData);
 
                     console.log('Post saved to Firestore');
+                    //also save the post to the collection named users to the specific objected named by userId, inside the posts array
+                    await updateDoc(docRef, {
+                        userPosts: arrayUnion(postData)
+                    });
+    
+
+                     //correcting the inconsistancy
+                    
+                    console.log('Post added to userPosts in users collection');
+
                 } else {
                     console.error('No such user document!');
                 }
@@ -89,6 +104,9 @@ export default function Head(props) {
         } else {
         handelNoTextPost();
         }
+
+
+       
     }
 
     return (
