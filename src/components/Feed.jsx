@@ -2,13 +2,19 @@ import React, { useEffect, useState } from "react";
 import logo from "../../public/logo.png";
 import { Link } from "react-router-dom";
 import Posts from "./Posts";
+import SkeletonLoader from "./SkeletonLoader";
 
 export default function Feed(props) {
   
   const posts = props.posts;
   console.log(props.userId)
-  
 
+  if(posts.length<1)
+{
+  return(
+    <SkeletonLoader/>
+  )
+}
   
   return (
     <>

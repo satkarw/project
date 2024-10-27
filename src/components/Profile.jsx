@@ -4,6 +4,7 @@ import logo from "../../public/logo.png";
 import { fetchUserProfile } from "./firebaseConfig";
 import { Link } from "react-router-dom";
 import Posts from "./Posts";
+import SkeletonLoader from "./SkeletonLoader";
 
 export default function Profile(props) {
   
@@ -20,7 +21,7 @@ export default function Profile(props) {
 
   useEffect(() => {
     if (location.state ) {
-      setProfileData(location.state);
+     
 
       if(!profileData){
         fetchUserProfile(userId).then(setProfileData);
@@ -33,7 +34,7 @@ export default function Profile(props) {
     }
   }, [location, userId]);
 
-  if (!profileData) return <div>Loading...</div>;
+  if (!profileData) return ( <SkeletonLoader/>)
 
   const { userPosts, userProfile } = profileData;
   const userPostArray = Object.values(userPosts || {});
