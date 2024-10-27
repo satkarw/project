@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import { CSSTransition } from "react-transition-group";
 import logo from "../../public/logo.png";
-import { doc, getDoc, addDoc, collection } from 'firebase/firestore';
+import { doc, getDoc, addDoc, collection , setDoc } from 'firebase/firestore';
 
 import { db } from './firebaseConfig'; // Import Firestore instance
 import Logout from "./Logout";
@@ -47,6 +47,7 @@ export default function Head(props) {
     }   
 
     // Handle posting when logged in
+   
     async function handlePost() {
         const postText = document.getElementById('textInput').value.replace(/\r\n/g, '\n');
         const userId = props.userData.uid;
@@ -73,6 +74,10 @@ export default function Head(props) {
                     const postsCollectionRef = collection(db, 'posts');
                     await addDoc(postsCollectionRef, postData);
 
+
+                    
+
+
                     // Clear textarea
                     document.getElementById('textInput').value = '';
 
@@ -80,6 +85,17 @@ export default function Head(props) {
                     props.setNewPost(postData);
 
                     console.log('Post saved to Firestore');
+
+
+                    //saving post to firestore in user collection
+                    const userDocRef = doc(db, 'users',userId);
+                    const userDoc = await getDoc(userDocRef);
+                    if (userDoc.exists()){
+                        const userPosts = userDoc.data().userPosts || [];
+                        userPosts.push(postData);
+                        await setDoc(userDocRef,{userPosts},{merge:true});
+                    }
+
                 } else {
                     console.error('No such user document!');
                 }
@@ -90,6 +106,7 @@ export default function Head(props) {
         handelNoTextPost();
         }
     }
+
 
     return (
         <div>
@@ -131,6 +148,7 @@ export default function Head(props) {
             <div className="border-b border-gray-700 py-5 pl-5 transition-all duration-300 ease-in-out">
                 <div className="flex gap-6">
                     <img src={logo} alt="" className="w-10 h-10 rounded-full" />
+
                     <textarea 
                         type="text" 
                         id="textInput"
@@ -142,10 +160,12 @@ export default function Head(props) {
                         }}
                     />
                     <div className="flex flex-col gap-2 transition">
+
                         {isLoggedIn() ? (
                             <button 
                                 className="bg-slate-950 hover:bg-slate-800 text-white px-5 h-fit py-3 border rounded-lg mr-2"
-                                onClick={handlePost}
+                               onClick={handlePost}
+                             
                             >
                                 Post
                             </button>

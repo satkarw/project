@@ -6,7 +6,7 @@ import Login from "./Login";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { fetchPostsFromFirestore } from './firebaseConfig';  // Import the new fetch function for Firestore
 import { fetchDataFromFirestore } from "./firebaseConfig";
-import { doc, getDoc, setDoc, addDoc } from 'firebase/firestore'; // Add Firestore functions
+import { doc, getDoc} from 'firebase/firestore'; // Add Firestore functions
 import { db } from './firebaseConfig';
 
 

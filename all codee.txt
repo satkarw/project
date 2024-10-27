@@ -1,0 +1,993 @@
+i will paste all my code here at once in this txt file
+
+
+APP.JSX 
+
+[
+
+import React from 'react';
+import {BrowserRouter as  Router,Routes, Route} from 'react-router-dom';
+import { useState } from 'react';
+import Left from './components/Left';
+import Mid from './components/Mid';
+import Profile from './components/Profile';
+
+
+function App() {
+
+  // const [profileClick, setProfileClick] = useState(false);
+  const deletePost = (postId,userId) =>{
+    console.log("the post is deleted : ", postId," ",userId);
+  }
+
+  const [profilePosts,setProfilePosts]=useState([null]);
+
+
+
+  return (
+
+
+
+    <>
+      {/* Main body */}
+      
+      <div className='bg-black text-white h-fit flex justify-center pt-5 '>
+
+        <div className='
+
+        bg-black text-white 
+        h-screen grid grid-cols-[minmax(0,800px)]
+         md:grid-cols-[50px_minmax(0,_800px)]
+         '>
+          
+          <div className='hidden md:flex'>
+            <Left/>
+          </div>
+
+
+
+          <div className='overflow-auto overflow-y-scroll no-scrollbar min-w-[100px] border-l border-r border-gray-700 md:pl-0 '>
+
+            <Routes>
+
+              <Route path='/' element={
+                
+                <Mid
+                setProfilePosts={setProfilePosts} 
+                profilePosts={profilePosts} 
+              deletePost={deletePost}
+            
+              />} />
+
+              <Route path="/profile/:userId" element={<Profile 
+              deletePost={deletePost}
+              profilePosts={profilePosts}
+             
+              />} />
+           
+              {/* <Route path="*" element={<NotFound />} /> */}
+             
+
+            </Routes>
+
+
+
+          </div>
+
+  
+        </div>
+        
+      </div>
+ 
+    </>
+  );
+}
+
+export default App;
+
+
+
+]
+
+left.jsx [
+
+import React from "react";
+import logo from "../../public/logo.png";
+import homeIcon from "../../public/homeIcon.png";
+import { Link } from "react-router-dom";
+
+export default function Left(props) {
+  return (
+    <div className="h-screen  md:flex md:flex-col hidden items-center ">
+      <a href="">
+        <img src={logo} alt="Logo" className="w-10  rounded-lg" />
+      </a>
+      <button className="mt-4">
+        <Link to="/" className="flex justify-center items-center ">
+          <img src={homeIcon} alt="" className="w-7" /> 
+        </Link>
+      </button>
+    </div>
+  );
+}
+
+
+]
+
+mid.jsx 
+[
+
+import React, { useState, useEffect } from "react";
+import Head from "./Head";
+import Feed from './Feed';
+import Sign from "./Sign";
+import Login from "./Login";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { fetchPostsFromFirestore } from './firebaseConfig';  // Import the new fetch function for Firestore
+import { fetchDataFromFirestore } from "./firebaseConfig";
+import { doc, getDoc, setDoc, addDoc } from 'firebase/firestore'; // Add Firestore functions
+import { db } from './firebaseConfig';
+
+
+export default function Mid(props) {
+
+  const [logInState, setLoginState] = useState('');
+  const [ifLoggedIn, setIfLoggedIn] = useState(false)
+  const auth = getAuth();
+  const [userObj, setUserObj] = useState('');
+  const [newPost, setNewPost] = useState('');
+//
+  // const [profileClick, setProfileClick] = useState(false);
+
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setIfLoggedIn(true)
+
+        setUserObj(user);
+
+
+
+
+
+
+      }
+      else {
+
+        setIfLoggedIn(false);
+        setUserObj(null);  // Handle when user logs out
+      }
+    });
+
+    return () => unsubscribe();
+
+  }, [auth]);
+
+
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const fetchedPosts = await fetchPostsFromFirestore(); // Fetch from Firestore
+        setPosts(fetchedPosts);  // Set the posts state with fetched posts
+      } catch (error) {
+        console.error('Error fetching posts from Firestore:', error);
+      }
+    };
+    fetchPosts();
+  }, []);
+
+  if (posts) {
+    const existingPosts = props.profilePosts;
+    posts.map((post) => {
+      if (post.userId === userObj?.uid) {
+        existingPosts.push(post); 
+      }
+    })
+
+    props.setProfilePosts(existingPosts);
+
+  }
+
+
+
+
+
+  const [userPosts, setUserPosts] = useState([]);
+  useEffect(() => {
+    // Fetch user data when userObj changes
+    if (userObj?.uid) {
+      fetchDataFromFirestore('users', userObj.uid)
+        .then(data => {
+
+          const userData = data[0];
+          setUserPosts(userData?.userPosts || []);
+        })
+        .catch(error => console.error('Error fetching user posts:', error));
+    }
+  }, [userObj?.uid]);
+
+
+  const [userData, setUserData] = useState(null);
+  useEffect(() => {
+
+    const fetchUserData = async () => {
+
+      if (userObj?.uid) {
+
+        try {
+          const userDocRef = doc(db, "users", userObj.uid);
+          const userDocSnap = await getDoc(userDocRef);
+
+          if (userDocSnap.exists()) {
+            const fetchedData = userDocSnap.data();
+            setUserData(fetchedData);
+
+
+          }
+          else {
+            console.log("no such user document");
+
+          }
+
+        } catch (error) {
+          console.error("Error: ", error);
+        }
+      }
+
+
+    };
+    fetchUserData();
+
+  }, [userObj?.uid]);
+
+
+
+
+  return (
+    <div className={`relative flex flex-col w-full`}>
+      <Head
+        setLoginState={setLoginState}
+        ifLoggedIn={ifLoggedIn}
+        setIfLoggedIn={setIfLoggedIn}
+        userData={userObj}
+        userId={userObj?.uid}
+        userPosts={userPosts}
+        setNewPost={setNewPost}
+        setUserObj={setUserObj}
+        userProfile={userData} ///this is for the data from firestore
+
+      />
+      <Feed
+        ifLoggedIn={ifLoggedIn}
+        newPost={newPost}
+        posts={posts}
+        userId={userObj?.uid}
+        deletePost={props.deletePost}
+      />
+      {logInState && (logInState === 'signin' ?
+        <Sign setLoginState={setLoginState} setIfLoggedIn={setIfLoggedIn} />
+        :
+        <Login setLoginState={setLoginState} setIfLoggedIn={setIfLoggedIn} />
+      )}
+    </div>
+  );
+}
+
+]
+
+head [
+
+
+    import React from "react";
+import { useState } from "react";
+import { CSSTransition } from "react-transition-group";
+import logo from "../../public/logo.png";
+import { doc, getDoc, addDoc, collection } from 'firebase/firestore';
+
+import { db } from './firebaseConfig'; // Import Firestore instance
+import Logout from "./Logout";
+import { Link } from "react-router-dom";
+import './transition.css'
+
+
+export default function Head(props) {
+
+    const [showLoginFirst, setShowLoginFirst] = useState(false);
+    const [showEmptyPost, setShowEmptyPost] = useState(false);
+
+
+    function isLoggedIn() {
+        return props.ifLoggedIn;
+    }
+
+    function reload(){
+        window.location.reload();
+    }
+
+    function handelLogin() {
+        props.setLoginState('login');
+    }
+
+    function handelSignin() {
+        props.setLoginState('signin');
+    }
+
+    function handleNotLoggedInPostClick() {
+        setShowLoginFirst(true); // Trigger the transition
+        setTimeout(() => {
+            setShowLoginFirst(false); // Hide after 2 seconds
+        }, 2000);
+    }
+
+    function handelNoTextPost(){
+        setShowEmptyPost(true); // Trigger the transition
+        setTimeout(() => {
+            setShowEmptyPost(false); // Hide after 2 seconds
+        }, 2000);
+    }   
+
+    // Handle posting when logged in
+    async function handlePost() {
+        const postText = document.getElementById('textInput').value.replace(/\r\n/g, '\n');
+        const userId = props.userData.uid;
+
+        if (postText.trim() !== '') {
+            try {
+                const docRef = doc(db, 'users', userId);
+                const docSnapshot = await getDoc(docRef);
+
+                if (docSnapshot.exists()) {
+                    const userData = docSnapshot.data();
+                    const ghostName = userData.ghostName;
+                    const postId = `${userId}${Date.now()}`;
+
+                    const postData = {
+                        postId: postId,
+                        postText: postText.replace(/\r\n/g, '\n'),
+                        ghostName: ghostName,
+                        userId: userId,
+                        timestamp: Date.now(),
+                    };
+
+                    // Save new post to Firestore 'posts' collection
+                    const postsCollectionRef = collection(db, 'posts');
+                    await addDoc(postsCollectionRef, postData);
+
+                    // Clear textarea
+                    document.getElementById('textInput').value = '';
+
+                    // Update the state in parent component 
+                    props.setNewPost(postData);
+
+                    console.log('Post saved to Firestore');
+                } else {
+                    console.error('No such user document!');
+                }
+            } catch (error) {
+                console.error('Error posting to Firestore:', error);
+            }
+        } else {
+        handelNoTextPost();
+        }
+    }
+
+    return (
+        <div>
+            {/* Header */}
+            <div >   
+            <div className="flex justify-center items-center border-b border-gray-700 order-gray-700 pb-5 pl-5">
+                <button onClick={reload}>
+                    <img src={logo} alt="Logo" className="w-10 pr-3 rounded-lg" />
+                </button>
+                <a href="#" className="text-xl hover hover:underline">Your Feed</a>
+                <div className="ml-auto mr-2">
+                    {isLoggedIn() ? (
+                        <div className="flex gap-2">
+                            <button className="border px-3 rounded-md hover:bg-slate-800">
+
+                                {/*-----------------profile-------------------------------------------*/}
+                            <Link to={`/profile/${props.userId}`}
+                                    state={{userPosts: props.userPosts, userID:props.userId , userProfile: props.userProfile, mainUserId:props.userId}}>
+                                    Profile
+                            </Link>
+                            </button>
+                            <Logout setIfLoggedIn={props.setIfLoggedIn} setUserObj={props.setUserObj} />
+                        </div>
+                    ) : (
+                        <div className="flex gap-5">
+                            <button className="border px-2 rounded-md hover:bg-slate-800" onClick={handelLogin}>
+                                Log-in
+                            </button>
+                            <button className="border px-2 rounded-md hover:bg-slate-800" onClick={handelSignin}>
+                                Sign-up
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </div>
+            </div>
+
+            {/* Post Box */}
+            <div className="border-b border-gray-700 py-5 pl-5 transition-all duration-300 ease-in-out">
+                <div className="flex gap-6">
+                    <img src={logo} alt="" className="w-10 h-10 rounded-full" />
+                    <textarea 
+                        type="text" 
+                        id="textInput"
+                        className="bg-transparent h-fit w-full p-1 pl-2 resize-none whitespace-pre"
+                        placeholder="Write your Ghost Status"
+                        onInput={(e) => {
+                            e.target.style.height = 'auto';
+                            e.target.style.height = `${e.target.scrollHeight}px`;
+                        }}
+                    />
+                    <div className="flex flex-col gap-2 transition">
+                        {isLoggedIn() ? (
+                            <button 
+                                className="bg-slate-950 hover:bg-slate-800 text-white px-5 h-fit py-3 border rounded-lg mr-2"
+                                onClick={handlePost}
+                            >
+                                Post
+                            </button>
+                        ) : (
+                            <button 
+                                className="bg-slate-900 hover:bg-slate-700 text-white px-5 h-fit py-3 border active:bg-red-800 active:border-red-900 rounded-lg mr-2"
+                                onClick={handleNotLoggedInPostClick}
+                            >
+                                Post
+                            </button>
+                        )}
+                        <p className="text-red-500 hidden" id='loginFirstText'>login first</p>
+                        <p className="text-red-500 hidden" id='emptyPostText'>Empty Post</p>
+
+                        <CSSTransition
+                            in={showLoginFirst}
+                            timeout={300}
+                            classNames="fade"
+                            unmountOnExit
+                        >
+                            <p className="text-red-500" id='loginFirstText'>login first</p>
+                        </CSSTransition>
+
+                        <CSSTransition
+                            in={showEmptyPost}
+                            timeout={300}
+                            classNames="fade"
+                            unmountOnExit
+                        >
+                            <p className="text-red-500" id='emptyPostText'>Empty Post</p>
+                        </CSSTransition>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+]
+
+feed [
+
+   import React, { useEffect, useState } from "react";
+import logo from "../../public/logo.png";
+import { Link } from "react-router-dom";
+
+export default function Feed(props) {
+  const posts = props.posts;
+  console.log(props.userId)
+  
+
+  function threeDots(postId, userId) {
+    return null;
+
+    // <div>
+
+    // <button onClick={()=>props.deletePost(postId,userId)}>DeletePost</button>
+
+    // </div>
+  }
+
+  return (
+    <>
+      {props.newPost && (
+        <div className="mt-4 ml-3 mr-3 border border-gray-700 p-3 rounded-lg flex flex-col gap-4 ">
+          {/* user name and dp */}
+
+          <div className="flex gap-2 items-center">
+            <img src={logo} alt="" className="rounded-full w-10" />
+            <button href="#" className="text-xl">
+                <Link to={`/profile/${props.newPost.userId}`}
+                                    state={{ userID:props.newpost.userId, userProfile:{}, userPosts: {}, mainUserId:props.userId} }>
+                                    <strong>{props.newPost.ghostName}</strong>
+                </Link>
+            </button>
+
+            <p className="text-slate-600 text-sm pt-[3px] pl-[5px]">
+              {new Intl.DateTimeFormat("en-US", {
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+              }).format(new Date(propnewPost.timestamp))}
+            </p>
+              
+          
+
+          </div>
+
+          {/* text content */}
+          <div className="m-3 pb-2 border-b">
+            <p className="text-xl">{props.newPost.postText}</p>
+          </div>
+
+          <div>
+            <p className="text-slate-600 text-sm ml-5">
+              {" "}
+              likes and comments -- comming soon{" "}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {posts.map((post, index) => (
+        <div
+          key={post.id || index}
+          className="mt-4 ml-3 mr-3 border border-gray-700 p-3 rounded-lg flex flex-col gap-4 "
+        >
+          {/* user name and dp */}
+
+          <div className="flex gap-2 items-center">
+            <img src={logo} alt="" className="rounded-full w-10" />
+            <button href="#" className="text-xl">
+                <Link to={`/profile/${post.userId}`}
+                      state={{ userID:post.userId, userProfile:{}, userPosts: {}, mainUserId:props.userId } }>
+                      <strong>{post.ghostName}</strong>
+                </Link>
+            </button>
+            
+            <p className="text-slate-600 text-sm pt-[3px] pl-[5px]">
+              {new Intl.DateTimeFormat("en-US", {
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+              }).format(new Date(post.timestamp))}
+            </p>
+
+            {post.userId === props.userId ? (
+              <div className="ml-auto">
+                {
+                  <>
+                    <button
+                      className="px-2 rounded-md hover:bg-slate-700"
+                      onClick={() => threeDots(post.postId, post.userId)}
+                    >
+                      <p className="font-extrabold ">&#8942;</p>
+                    </button>
+                    
+                  </>
+                }
+              </div>
+            ) : null}
+          </div>
+
+          {/* text content */}
+          <div className="m-3 pb-2 border-b whitespace-pre-wrap">
+            <p className="md:text-xl text-lg">{post.postText}</p>
+          </div>
+
+          <div>
+            <p className="text-slate-600 text-sm ml-5">
+              {" "}
+              likes and comments -- comming soon{" "}
+            </p>
+          </div>
+        </div>
+      ))}
+    </>
+  );
+}
+
+
+]
+
+login.jsx [
+
+    import React from 'react';
+import { signInWithGoogle } from './firebaseConfig';
+
+export default function Login(props) {
+    async function handleGoogleLogin() {
+        try {
+            // Trigger Google login
+            const user = await signInWithGoogle();
+            
+            if (user) {
+                console.log('User logged in:', user);
+                
+                // Assuming props.setIfLoggedIn is used to set authentication state
+                props.setIfLoggedIn(true);
+                props.setLoginState(''); // Close login modal or reset state
+            }
+        } catch (error) {
+            console.error('Error logging in with Google:', error);
+            alert('Error logging in. Please try again.');
+        }
+    }
+
+    function handleCross() {
+        props.setLoginState(''); // Close login modal or reset state
+    }
+
+    return (
+        <>
+            <div className=" fixed  z-50  flex flex-col 
+        gap-5 justify-center items-center bg-slate-900 w-[350px] h-[450px] 
+       self-center top-[150px]
+        rounded-3xl">
+                <h1>Log In</h1>
+                <button onClick={handleGoogleLogin} className="border px-5 py-2 rounded-lg bg-slate-700">
+                    Log-in with Google
+                </button>
+                <button onClick={handleCross} className="border px-5 py-2 rounded-lg bg-red-700">
+                    X
+                </button>
+            </div>
+        </>
+    );
+}
+
+]
+
+logout [
+
+import React from "react";
+import { getAuth, signOut } from "firebase/auth";
+
+export default function Logout({ setIfLoggedIn, setUserObj }) {
+    const auth = getAuth();
+
+    // Handle Logout
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+            setIfLoggedIn(false); // Update logged-in state
+            setUserObj(''); // Clear user data
+            console.log("User logged out successfully.");
+        } catch (error) {
+            console.error("Error logging out:", error);
+        }
+    };
+
+    return (
+        <button 
+            className="border px-2 rounded-md hover:bg-slate-800"
+            onClick={handleLogout}
+        >
+            Logout
+        </button>
+    );
+}
+
+
+
+]
+
+profile [
+
+  import React, { useEffect, useState } from "react";
+import { useLocation, useParams } from "react-router-dom";
+import logo from "../../public/logo.png";
+import { fetchUserProfile } from "./firebaseConfig";
+// import { doc, getDoc } from 'firebase/firestore';
+// import { saveDataToFirestore, savePostToRealtimeDatabase } from './firebaseConfig';
+// import { db } from './firebaseConfig'; // Import Firestore instance
+// import Logout from "./Logout";
+// import {fetchPostsFromRealtimeDatabase} from './firebaseConfig';
+// import { fetchDataFromFirestore } from "./firebaseConfig";
+
+export default function Profile(props) {
+  
+  const location = useLocation();
+  const { userId } = useParams();
+  const mainUserId = location.state?.mainUserId;
+
+  console.log(mainUserId);
+
+ 
+      
+  const [profileData, setProfileData] = useState(null);
+  
+
+  useEffect(() => {
+    if (location.state ) {
+      setProfileData(location.state);
+
+      if(!profileData){
+        fetchUserProfile(userId).then(setProfileData);
+
+      }
+      
+    } else if (userId) {
+      // Fetch profile data if not available in state
+      fetchUserProfile(userId).then(setProfileData);
+    }
+  }, [location, userId]);
+
+  if (!profileData) return <div>Loading...</div>;
+
+  const { userPosts, userProfile } = profileData;
+  const userPostArray = Object.values(userPosts || {});
+  const sortedPosts = userPostArray.sort((a, b) => b.timestamp - a.timestamp);
+
+  let allPosts = [];
+
+  if (!props.profileData) {
+    allPosts = sortedPosts;
+  } else {
+    allPosts = props.profilePosts;
+  }
+
+  return (
+    <>
+
+    
+      <div className="h-[20rem] w-[100%] flex relative">
+        <div></div>
+        <div className="h-52 bg-slate-800 w-[100%] flex flex-col items-center justify-center gap-5"></div>
+
+        <div className="w-fit rounded-full absolute top-[8rem] left-5 border-[0.5rem] border-slate-950">
+          <img
+            src={logo}
+            alt=""
+            className="rounded-full w-40 h-auto overflow-hidden border-4"
+          />
+        </div>
+      </div>
+
+      <div className="pl-6">
+        <p className="text-2xl font-bold">{userProfile.ghostName}</p>
+      </div>
+
+      {/* ------------------------------- Posts ---------------------*/}
+
+      <div className=" border-b border-gray-700 mt-10 flex justify-center">
+        <p className="text-xl font-bold border-b">Posts</p>
+      </div>
+      
+      {allPosts.map((post, index) => (
+        <div
+          key={post.id || index}
+          className="mt-4 ml-3 mr-3 border border-gray-700 p-3 rounded-lg flex flex-col gap-4 "
+        >
+          {/* user name and dp */}
+
+          <div className="flex gap-2 items-center">
+            <img src={logo} alt="" className="rounded-full w-10" />
+            <a href="#" className="text-xl">
+              <strong>{post.ghostName}</strong>
+            </a>
+            <p className="text-slate-600 text-sm pt-[3px] pl-[5px]">
+              {new Intl.DateTimeFormat("en-US", {
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+              }).format(new Date(post.timestamp))}
+            </p>
+
+            {post.userId === mainUserId ? (
+              <div className="ml-auto">
+                {
+                  <button
+                    onClick={() => props.deletePost(post.postId, post.userId)}
+                    className="px-2 rounded-md hover:bg-slate-700"
+                  >
+                    <p className="font-extrabold ">&#8942;</p>
+                  </button>
+                }
+              </div>
+            ) : null}
+          </div>
+
+          {/* text content */}
+          <div className="m-3 pb-2 border-b whitespace-pre-wrap">
+            <p className="md:text-xl text-lg">{post.postText}</p>
+          </div>
+
+          <div>
+            <p className="text-slate-600 text-sm ml-5">
+              {" "}
+              likes and comments -- comming soon{" "}
+            </p>
+          </div>
+        </div>
+      ))}
+    </>
+  );
+}
+
+
+]
+
+
+
+firebase.config[
+
+import { initializeApp } from "firebase/app";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+} from "firebase/auth";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  doc,
+  setDoc,
+  getDoc
+} from "firebase/firestore";
+import { getDatabase, ref, set } from "firebase/database";
+import { orderByChild, get } from "firebase/database";
+import { orderBy } from "firebase/firestore";
+
+// Your Firebase configuration
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+
+// Initialize services
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const database = getDatabase(app);
+// Setup providers for Google Authentication
+export const googleProvider = new GoogleAuthProvider();
+
+// Authentication functions
+export const signUpWithEmail = async (email, password) => {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+    return userCredential.user; // This contains the user ID and other user information
+  } catch (error) {
+    console.error("Error signing up with email and password:", error);
+  }
+};
+
+export const signInWithGoogle = async () => {
+  try {
+    const userCredential = await signInWithPopup(auth, googleProvider);
+    return userCredential.user; // This contains the user ID and other user information
+  } catch (error) {
+    console.error("Error signing in with Google:", error);
+  }
+};
+
+// Database functions
+export const saveDataToFirestore = async (collectionName, data, userId) => {
+  try {
+    const docRef = doc(db, collectionName, userId); // Reference to the document using userId as the ID
+    await setDoc(docRef, data, { merge: true }); // Save the document with the given userId as the document ID and merge with existing data
+    console.log("Document written with ID: ", userId);
+    return userId;
+  } catch (error) {
+    console.error("Error adding document: ", error);
+  }
+};
+
+export const fetchDataFromFirestore = async (collectionName, userId) => {
+  try {
+    const q = query(
+      collection(db, collectionName),
+      where("userId", "==", userId)
+    );
+    const querySnapshot = await getDocs(q);
+    const data = querySnapshot.docs.map((doc) => doc.data());
+    const dataArray = Object.values(data);
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching documents: ", error);
+  }
+};
+
+// Saving to Realtime Database
+export const savePostToRealtimeDatabase = async (postData) => {
+  try {
+    const postRef = ref(database, `posts/${postData.postId}`); // Create a reference for the post using its ID
+    await set(postRef, postData); // Save the post data at the specified reference
+    console.log("Post saved to Realtime Database");
+  } catch (error) {
+    console.error("Error saving post to Realtime Database:", error);
+  }
+};
+
+export const fetchPostsFromRealtimeDatabase = async () => {
+  try {
+    const db = getDatabase();
+    const postsRef = ref(db, "posts"); // Reference to the 'posts' folder
+    const postsQuery = query(postsRef, orderByChild("timestamp")); // Query to order by timestamp
+    const snapshot = await get(postsQuery);
+
+    if (snapshot.exists()) {
+      const posts = snapshot.val(); // Returns an object containing all posts
+      const postsArray = Object.values(posts);
+      const shortedPosts = postsArray.sort((a, b) => b.timestamp - a.timestamp);
+      return Object.values(shortedPosts);
+    } else {
+      console.log("No data available");
+      return [];
+    }
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    return [];
+  }
+};
+
+export const fetchUserProfile = async (userId) => {
+  try {
+    const userDocRef = doc(db, "users", userId);
+    const userDocSnap = await getDoc(userDocRef);
+
+    if (userDocSnap.exists()) {
+      const userData = userDocSnap.data();
+      return {
+        userPosts: userData.userPosts || [],
+        userProfile: {
+          ghostName: userData.ghostName,
+        },
+      };
+    } else {
+      console.log("no such user document");
+      return null;
+    }
+  } catch (error) {
+    console.error("error: ", error);
+    return null;
+  }
+};
+
+// Fetch posts from Firestore and order them by timestamp
+export const fetchPostsFromFirestore = async () => {
+  try {
+    const postsCollectionRef = collection(db, "posts"); // Reference to 'posts' collection
+    const postsQuery = query(postsCollectionRef, orderBy("timestamp", "desc")); // Query to order by timestamp (descending)
+    const querySnapshot = await getDocs(postsQuery);
+
+    const postsArray = [];
+    querySnapshot.forEach((doc) => {
+      postsArray.push(doc.data());
+    });
+
+    return postsArray; // Return posts in descending order by timestamp
+  } catch (error) {
+    console.error("Error fetching posts from Firestore:", error);
+    return [];
+  }
+};
+
+
+]

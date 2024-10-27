@@ -2,12 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import logo from "../../public/logo.png";
 import { fetchUserProfile } from "./firebaseConfig";
-// import { doc, getDoc } from 'firebase/firestore';
-// import { saveDataToFirestore, savePostToRealtimeDatabase } from './firebaseConfig';
-// import { db } from './firebaseConfig'; // Import Firestore instance
-// import Logout from "./Logout";
-// import {fetchPostsFromRealtimeDatabase} from './firebaseConfig';
-// import { fetchDataFromFirestore } from "./firebaseConfig";
+import { Link } from "react-router-dom";
+import Posts from "./Posts";
 
 export default function Profile(props) {
   
@@ -54,6 +50,7 @@ export default function Profile(props) {
   return (
     <>
 
+    {/* this is for when user uploads a new post */}
     
       <div className="h-[20rem] w-[100%] flex relative">
         <div></div>
@@ -77,55 +74,27 @@ export default function Profile(props) {
       <div className=" border-b border-gray-700 mt-10 flex justify-center">
         <p className="text-xl font-bold border-b">Posts</p>
       </div>
-      {allPosts.map((post, index) => (
-        <div
-          key={post.id || index}
-          className="mt-4 ml-3 mr-3 border border-gray-700 p-3 rounded-lg flex flex-col gap-4 "
-        >
-          {/* user name and dp */}
 
-          <div className="flex gap-2 items-center">
-            <img src={logo} alt="" className="rounded-full w-10" />
-            <a href="#" className="text-xl">
-              <strong>{post.ghostName}</strong>
-            </a>
-            <p className="text-slate-600 text-sm pt-[3px] pl-[5px]">
-              {new Intl.DateTimeFormat("en-US", {
-                month: "short",
-                day: "numeric",
-                hour: "2-digit",
-                minute: "2-digit",
-                hour12: false,
-              }).format(new Date(post.timestamp))}
-            </p>
+{  
 
-            {post.userId === mainUserId ? (
-              <div className="ml-auto">
-                {
-                  <button
-                    onClick={() => props.deletePost(post.postId, post.userId)}
-                    className="px-2 rounded-md hover:bg-slate-700"
-                  >
-                    <p className="font-extrabold ">&#8942;</p>
-                  </button>
-                }
-              </div>
-            ) : null}
-          </div>
+allPosts.map((post,index)=> (
+  <Posts
 
-          {/* text content */}
-          <div className="m-3 pb-2 border-b whitespace-pre-wrap">
-            <p className="md:text-xl text-lg">{post.postText}</p>
-          </div>
+posts={allPosts}
+post={post}
+index={index}
+userId={mainUserId}
+deletePost = {props.deletePost}
+key={post.id || `post-${index}`}
 
-          <div>
-            <p className="text-slate-600 text-sm ml-5">
-              {" "}
-              likes and comments -- comming soon{" "}
-            </p>
-          </div>
-        </div>
-      ))}
+/>
+)
+
+
+
+)  }
+
+
     </>
   );
 }
