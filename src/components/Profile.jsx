@@ -55,7 +55,7 @@ export default function Profile(props) {
     
       <div className="h-[20rem] w-[100%] flex relative">
         <div></div>
-        <div className="h-52 bg-slate-800 w-[100%] flex flex-col items-center justify-center gap-5"></div>
+        <div className="h-52  bg-slate-800 w-[100%] flex flex-col items-center justify-center gap-5"></div>
 
         <div className="w-fit rounded-full absolute top-[8rem] left-5 border-[0.5rem] border-slate-950">
           <img
