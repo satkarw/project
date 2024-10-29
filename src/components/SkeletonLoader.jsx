@@ -9,7 +9,7 @@ export default function SkeletonLoader() {
 
   return (
     <div className="flex h-screen w-full bg-black text-gray-600">
-      {/* Main Feed Skeleton */}
+      {/* Main Feed skeleton ... */}
       <div className="flex-1 p-6 ">
         <motion.div
           initial="hidden"
