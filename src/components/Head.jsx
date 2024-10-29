@@ -69,21 +69,15 @@ export default function Head(props) {
                         userId: userId,
                         timestamp: Date.now(),
                     };
+                     // Update the state in parent component 
+                    props.setNewPost(postData);
+                    // Clear textarea
+                    document.getElementById('textInput').value = '';
+
 
                     // Save new post to Firestore 'posts' collection
                     const postsCollectionRef = collection(db, 'posts');
                     await addDoc(postsCollectionRef, postData);
-
-
-                    
-
-
-                    // Clear textarea
-                    document.getElementById('textInput').value = '';
-
-                    // Update the state in parent component 
-                    props.setNewPost(postData);
-
                     console.log('Post saved to Firestore');
 
 
