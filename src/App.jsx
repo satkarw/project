@@ -4,13 +4,88 @@ import { useState } from 'react';
 import Left from './components/Left';
 import Mid from './components/Mid';
 import Profile from './components/Profile';
-
+import { getDoc,getFirestore,doc,updateDoc,arrayRemove,deleteDoc, collection, query,where,getDocs } from 'firebase/firestore';
+import { db } from './components/firebaseConfig';
 
 function App() {
 
-  // const [profileClick, setProfileClick] = useState(false);
-  const deletePost = (postId,userId) =>{
-    console.log("the post is deleted : ", postId," ",userId);
+
+
+async function deletePost(postId,userId){
+
+
+
+    try {
+
+      const postRef = collection(db,'posts');
+      const q = query(postRef,where('postId','==',postId));
+      const querySnapShot = await getDocs(q);
+
+      if(!querySnapShot.empty){
+        const postDoc = querySnapShot.docs[0];
+        await deleteDoc(postDoc.ref);
+        console.log("postDeleted");
+      }
+      else {
+        console.log("no such posts in the postDocumnts")
+      }
+
+      const userDocRef = doc(db,"users",userId);
+      const userSnapShot = await getDoc(userDocRef);
+
+      if (userSnapShot.exists()){
+
+        const userPosts = userSnapShot.data().userPosts || [];
+        const postToDelete = userPosts.find(post => post.postId === postId);
+        
+        if(postToDelete){
+          await updateDoc(userDocRef, {
+
+            userPosts:arrayRemove(postToDelete)
+
+          })
+
+          console.log('post removed from users collection');
+          
+        }
+        else {
+          console.log("such document doesnt exist in the user collection");
+        }
+
+      
+        // const updatedUserPosts = userPosts.filter(post => post.postId !== postId); 
+        // console.log("updatedPosts ",updatedUserPosts)
+        // await updateDoc(userDocRef , {
+        //   userPosts:updatedUserPosts
+        // });
+        // 
+
+
+      }
+
+      else 
+      {
+        console.log("no such document exists in user's collection")
+      }
+
+
+
+
+  }
+
+    catch(error)
+    {
+        console.log("error deleting the post from collectuion ",error);
+    }
+
+
+    try {
+
+    }
+    catch(error){
+
+    }
+
   }
 
   const [profilePosts,setProfilePosts]=useState([null]);
