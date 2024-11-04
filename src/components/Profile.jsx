@@ -5,6 +5,7 @@ import { fetchUserProfile } from "./firebaseConfig";
 import { Link } from "react-router-dom";
 import Posts from "./Posts";
 import SkeletonLoader from "./SkeletonLoader";
+import { motion, LayoutGroup, AnimatePresence } from "framer-motion";
 
 export default function Profile(props) {
   
@@ -50,6 +51,7 @@ export default function Profile(props) {
 
   return (
     <>
+     {/* <AnimatePresence> */}
 
     {/* this is for when user uploads a new post */}
     
@@ -76,6 +78,10 @@ export default function Profile(props) {
         <p className="text-xl font-bold border-b">Posts</p>
       </div>
 
+<LayoutGroup>
+  <motion.div
+  layout 
+  >
 {  
 
 allPosts.map((post,index)=> (
@@ -94,8 +100,10 @@ key={post.id || `post-${index}`}
 
 
 )  }
+</motion.div>
+</LayoutGroup>
 
-
+{/* </AnimatePresence> */}
     </>
   );
 }
