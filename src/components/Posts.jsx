@@ -52,6 +52,7 @@ export default function Post(props) {
               }).format(new Date(props.post.timestamp))}
             </p>
 
+              {/* ---------------MENU------------------------ */}
             {props.post.userId === props.userId && (
               <div className="ml-auto">
                 <button
@@ -67,7 +68,7 @@ export default function Post(props) {
                       animate={{ scale: 1, opacity: 1 }}
                       exit={{ scale: 0.5, opacity: 0 }}
                       transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                      className="h-fit w-fit border px-4 py-3 rounded-lg absolute right-2"
+                      className="h-fit w-fit border px-4 py-3 rounded-lg absolute right-2 bg-slate-900"
                     >
                       <button
                         className="px-4 py-2 rounded-md hover:bg-slate-800"
