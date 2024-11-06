@@ -16,7 +16,7 @@ export default function Mid(props) {
   const [ifLoggedIn, setIfLoggedIn] = useState(false)
   const auth = getAuth();
   const [userObj, setUserObj] = useState('');
-  const [newPost, setNewPost] = useState('');
+  const [newPost, setNewPost] = useState([]);
 //
   // const [profileClick, setProfileClick] = useState(false);
 

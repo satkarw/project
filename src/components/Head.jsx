@@ -70,7 +70,8 @@ export default function Head(props) {
                         timestamp: Date.now(),
                     };
                      // Update the state in parent component 
-                    props.setNewPost(postData);
+                    // props.setNewPost(postData);
+                    props.setNewPost((prev)=>(Array.isArray(prev)?[postData,...prev]:[postData]));
                     // Clear textarea
                     document.getElementById('textInput').value = '';
 
