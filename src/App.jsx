@@ -10,6 +10,7 @@ import { db } from './components/firebaseConfig';
 function App() {
 
 
+  const [likedPosts,setLikedPosts]= useState([]);
 
 async function deletePost(postId,userId){
 
@@ -88,7 +89,7 @@ async function deletePost(postId,userId){
 
   }
 
-  const [profilePosts,setProfilePosts]=useState([null]);
+  // const [profilePosts,setProfilePosts]=useState([null]);
 
 
 
@@ -113,7 +114,6 @@ async function deletePost(postId,userId){
           </div>
 
 
-
           <div className='overflow-auto overflow-y-scroll no-scrollbar min-w-[100px] border-l border-r border-gray-700 md:pl-0 '>
 
             <Routes>
@@ -121,15 +121,17 @@ async function deletePost(postId,userId){
               <Route path='/' element={
                 
                 <Mid
-                setProfilePosts={setProfilePosts} 
-                profilePosts={profilePosts} 
+               
               deletePost={deletePost}
+              likedPosts={likedPosts}
+              setLikedPosts = {setLikedPosts}
             
               />} />
 
               <Route path="/profile/:userId" element={<Profile 
               deletePost={deletePost}
-              profilePosts={profilePosts}
+              likedPosts={likedPosts}
+              setLikedPosts = {setLikedPosts}
              
               />} />
            

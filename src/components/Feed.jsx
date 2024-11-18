@@ -112,16 +112,19 @@ export default function Feed(props) {
 
         <LayoutGroup>
           <motion.div layout >
-            {posts.map((post, index) => (
-              <Posts
+            {posts.map((post, index) => 
+             (
+             <Posts
                 key={post.id || `post-${index}`}
                 posts={posts}
                 post={post}
                 index={index}
                 userId={props.userId}
                 deletePost={props.deletePost}
-              />
-            ))}
+                likedPosts={props.likedPosts||[]}
+                setLikedPosts ={props.setLikedPosts}
+              />)
+            )}
           </motion.div>
         </LayoutGroup>
       </motion.div>

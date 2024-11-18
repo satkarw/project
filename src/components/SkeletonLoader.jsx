@@ -21,7 +21,7 @@ export default function SkeletonLoader() {
           {/* Header Skeleton */}
           <div className="flex gap-4 items-center mb-6">
             {/* Adjusted from h-14 to h-7 */}
-            <div className="rounded-full bg-gray-900 w-9 h-9 skeleton-animate"></div>
+            <div className="rounded-full bg-gray-900 w-9 h-9 skeleton-animate "></div>
             <div className="flex flex-col gap-2">
               {/* Adjusted from h-5 to h-2.5 */}
               <div className="w-24 h-2.5 rounded-lg bg-gray-900 skeleton-animate"></div>

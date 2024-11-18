@@ -16,7 +16,10 @@ export default function Profile(props) {
   console.log(mainUserId);
 
  
-      
+    
+  
+
+
   const [profileData, setProfileData] = useState(null);
   
 
@@ -93,6 +96,7 @@ index={index}
 userId={mainUserId}
 deletePost = {props.deletePost}
 key={post.id || `post-${index}`}
+likedPosts={props.likedPosts}
 
 />
 )

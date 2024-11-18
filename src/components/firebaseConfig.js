@@ -93,37 +93,37 @@ export const fetchDataFromFirestore = async (collectionName, userId) => {
 };
 
 // Saving to Realtime Database
-export const savePostToRealtimeDatabase = async (postData) => {
-  try {
-    const postRef = ref(database, `posts/${postData.postId}`); // Create a reference for the post using its ID
-    await set(postRef, postData); // Save the post data at the specified reference
-    console.log("Post saved to Realtime Database");
-  } catch (error) {
-    console.error("Error saving post to Realtime Database:", error);
-  }
-};
+// export const savePostToRealtimeDatabase = async (postData) => {
+//   try {
+//     const postRef = ref(database, `posts/${postData.postId}`); // Create a reference for the post using its ID
+//     await set(postRef, postData); // Save the post data at the specified reference
+//     console.log("Post saved to Realtime Database");
+//   } catch (error) {
+//     console.error("Error saving post to Realtime Database:", error);
+//   }
+// };
 
-export const fetchPostsFromRealtimeDatabase = async () => {
-  try {
-    const db = getDatabase();
-    const postsRef = ref(db, "posts"); // Reference to the 'posts' folder
-    const postsQuery = query(postsRef, orderByChild("timestamp")); // Query to order by timestamp
-    const snapshot = await get(postsQuery);
+// export const fetchPostsFromRealtimeDatabase = async () => {
+//   try {
+//     const db = getDatabase();
+//     const postsRef = ref(db, "posts"); // Reference to the 'posts' folder
+//     const postsQuery = query(postsRef, orderByChild("timestamp")); // Query to order by timestamp
+//     const snapshot = await get(postsQuery);
 
-    if (snapshot.exists()) {
-      const posts = snapshot.val(); // Returns an object containing all posts
-      const postsArray = Object.values(posts);
-      const shortedPosts = postsArray.sort((a, b) => b.timestamp - a.timestamp);
-      return Object.values(shortedPosts);
-    } else {
-      console.log("No data available");
-      return [];
-    }
-  } catch (error) {
-    console.error("Error fetching posts:", error);
-    return [];
-  }
-};
+//     if (snapshot.exists()) {
+//       const posts = snapshot.val(); // Returns an object containing all posts
+//       const postsArray = Object.values(posts);
+//       const shortedPosts = postsArray.sort((a, b) => b.timestamp - a.timestamp);
+//       return Object.values(shortedPosts);
+//     } else {
+//       console.log("No data available");
+//       return [];
+//     }
+//   } catch (error) {
+//     console.error("Error fetching posts:", error);
+//     return [];
+//   }
+// };
 
 export const fetchUserProfile = async (userId) => {
   try {

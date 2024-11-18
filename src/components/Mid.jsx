@@ -17,33 +17,42 @@ export default function Mid(props) {
   const auth = getAuth();
   const [userObj, setUserObj] = useState('');
   const [newPost, setNewPost] = useState([]);
-//
+ 
+
+  //
+
   // const [profileClick, setProfileClick] = useState(false);
 
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setIfLoggedIn(true)
-
+        setIfLoggedIn(true);
         setUserObj(user);
-
-
-
-
-
-
-      }
-      else {
-
+  
+        const userId = user.uid;
+  
+        async function fetchLikedPost() {
+          const userDocRef = doc(db, "users", userId);
+          const userDocSnap = await getDoc(userDocRef);
+  
+          if (userDocSnap.exists()) {
+            const userData = userDocSnap.data();
+            props.setLikedPosts(userData.likedPosts || []);
+          } else {
+            console.log("User document not found");
+          }
+        }
+        fetchLikedPost();
+      } else {
         setIfLoggedIn(false);
-        setUserObj(null);  // Handle when user logs out
+        setUserObj(null); // Handle when user logs out
       }
     });
-
+  
     return () => unsubscribe();
-
   }, [auth]);
+  
 
 
   const [posts, setPosts] = useState([]);
@@ -60,17 +69,17 @@ export default function Mid(props) {
     fetchPosts();
   }, []);
 
-  if (posts) {
-    const existingPosts = props.profilePosts;
-    posts.map((post) => {
-      if (post.userId === userObj?.uid) {
-        existingPosts.push(post); 
-      }
-    })
+  // if (posts) {
+  //   const existingPosts = props.profilePosts;
+  //   posts.map((post) => {
+  //     if (post.userId === userObj?.uid) {
+  //       existingPosts.push(post); 
+  //     }
+  //   })
 
-    props.setProfilePosts(existingPosts);
+  //   props.setProfilePosts(existingPosts);
 
-  }
+  // }
 
 
 
@@ -147,6 +156,8 @@ export default function Mid(props) {
         posts={posts}
         userId={userObj?.uid}
         deletePost={props.deletePost}
+        likedPosts = {props.likedPosts}
+        setLikedPosts={props.setLikedPosts}
       />
       {logInState && (logInState === 'signin' ?
         <Sign setLoginState={setLoginState} setIfLoggedIn={setIfLoggedIn} />
