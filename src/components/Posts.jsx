@@ -5,14 +5,33 @@ import notLiked from "../../public/notLiked.png"
 // import {doc,getDoc,collection,ref} from "firebase/firestore";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import {doc, updateDoc,arrayUnion, arrayRemove} from "firebase/firestore"
+import {doc, updateDoc,arrayUnion, arrayRemove, collection,getDoc} from "firebase/firestore"
 import { db } from './firebaseConfig';
 
 export default function Post(props) {
   const [menuClick, setMenuClick] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
   const [isLiked,setIsLiked]=useState(false);
+  const [likedBy,setLikedBy]=useState([]);
+
+
   const postId = props.post?.postId;
+
+ useEffect(() => {
+
+  const fetchPostData = async () => {
+    const postDocRef = doc(db, "posts", postId);
+    const postDocSnapShot = await getDoc(postDocRef);
+    
+    if (postDocSnapShot.exists()) {
+      const data = postDocSnapShot.data();
+      const likedUsers = data.likedBy || [];
+      setLikedBy(likedUsers);
+    }
+  };
+
+  fetchPostData();
+}, []);
   // console.log(props.post)
   useEffect(()=>{
     
@@ -30,26 +49,52 @@ if(props.likedPosts && postId)
   // const [isLiked, setIsLiked]=useState(props.isLiked);
 
   async function handelLiked(postId) {
+
     const wasLiked = isLiked;
-    
+  
     // Toggle the local like state
     setIsLiked(prev => !prev);
   
     try {
       const userDocRef = doc(db, "users", props.userId);
+     
+
+      const postDocRef=doc(db,"posts",postId)
+     
+  
   
       if (!wasLiked) {
         // If the post was not liked, add it to the likedPosts array in Firestore
+        
+        setLikedBy(prev => [...prev,props.userId])
+       
         await updateDoc(userDocRef, {
           likedPosts: arrayUnion(postId)
+
         });
+        await updateDoc(postDocRef,{
+          likedBy:arrayUnion(props.userId)
+          
+        })
+        
+
       } else {
         // If the post was already liked, remove it from the likedPosts array in Firestore
+        setLikedBy((prev)=>{
+         return prev.filter(id => id != props.userId);
+        })
+        
         await updateDoc(userDocRef, {
           likedPosts: arrayRemove(postId)
         });
+
+        await updateDoc(postDocRef,{
+          likedBy:arrayRemove(props.userId)
+        })
       }
-  
+
+      
+      console.log(likedBy)
       console.log("Firestore likedPosts array updated successfully.");
     } catch (error) {
       console.error("Error updating likedPosts array:", error);
@@ -137,9 +182,15 @@ if(props.likedPosts && postId)
           </div>
           <div className=" mx-3 my-0 whitespace-pre-wrap">
             <p className="md:text-xl text-lg mb-3">{props.post.postText}</p>
-            <div className="border-t pt-1">
+            <div className="border-t pt-1 flex flex-col flex-start">
             
+            <div className="flex flex-col w-fit items-center">
+
             <button className="w-6" onClick={()=>handelLiked(props.post.postId)} ><img src={isLiked? liked: notLiked} alt=""/></button>
+            <button className="text-slate-600 text-sm">{likedBy.length? likedBy.length : null}</button>
+
+            </div>
+           
           </div>
           </div>
         

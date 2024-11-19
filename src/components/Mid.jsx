@@ -37,7 +37,8 @@ export default function Mid(props) {
         async function fetchLikedPost() {
           const userDocRef = doc(db, "users", userId);
           const userDocSnap = await getDoc(userDocRef);
-  
+          
+          //fetching userLikedPosts
           if (userDocSnap.exists()) {
             const userData = userDocSnap.data();
             props.setLikedPosts(userData.likedPosts || []);
@@ -70,18 +71,6 @@ export default function Mid(props) {
     };
     fetchPosts();
   }, []);
-
-  // if (posts) {
-  //   const existingPosts = props.profilePosts;
-  //   posts.map((post) => {
-  //     if (post.userId === userObj?.uid) {
-  //       existingPosts.push(post); 
-  //     }
-  //   })
-
-  //   props.setProfilePosts(existingPosts);
-
-  // }
 
 
 
