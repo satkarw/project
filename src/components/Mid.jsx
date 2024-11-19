@@ -6,7 +6,7 @@ import Login from "./Login";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { fetchPostsFromFirestore } from './firebaseConfig';  // Import the new fetch function for Firestore
 import { fetchDataFromFirestore } from "./firebaseConfig";
-import { doc, getDoc} from 'firebase/firestore'; // Add Firestore functions
+import { collection, doc, getDoc,setDoc, deleteDoc, arrayUnion, updateDoc} from 'firebase/firestore'; // Add Firestore functions
 import { db } from './firebaseConfig';
 
 
@@ -17,7 +17,9 @@ export default function Mid(props) {
   const auth = getAuth();
   const [userObj, setUserObj] = useState('');
   const [newPost, setNewPost] = useState([]);
- 
+  
+
+  
 
   //
 

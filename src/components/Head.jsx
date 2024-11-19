@@ -77,8 +77,8 @@ export default function Head(props) {
 
 
                     // Save new post to Firestore 'posts' collection
-                    const postsCollectionRef = collection(db, 'posts');
-                    await addDoc(postsCollectionRef, postData);
+                    const postsCollectionRef = doc(db, 'posts',postData.postId);
+                    await setDoc(postsCollectionRef, postData);
                     console.log('Post saved to Firestore');
 
 
