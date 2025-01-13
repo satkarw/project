@@ -148,6 +148,28 @@ export const fetchUserProfile = async (userId) => {
   }
 };
 
+export const fetchUserName = async(userId) =>{
+  try{
+
+    const userDocRef = doc(db, "users",userId);
+    const userDocSnap = await getDoc(userDocRef);
+
+    if (userDocSnap.exists()){
+      const userData = userDocSnap.data();
+      return{
+      userName: userData.ghostName 
+      }
+    }
+    else{
+      console.log("no such user document")
+    }
+
+  }
+  catch(error){
+    console.error("could not fetch user name",error);
+  }
+} 
+
 // Fetch posts from Firestore and order them by timestamp
 export const fetchPostsFromFirestore = async () => {
   try {

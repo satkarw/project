@@ -12,8 +12,8 @@ export default function Profile(props) {
   const location = useLocation();
   const { userId } = useParams();
   const mainUserId = location.state?.mainUserId;
-
-  console.log(mainUserId);
+  
+  
 
  
     

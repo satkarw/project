@@ -7,17 +7,23 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {doc, updateDoc,arrayUnion, arrayRemove, collection,getDoc} from "firebase/firestore"
 import { db } from './firebaseConfig';
+import LikedByUsers from "./LikedByUsers";
 
 export default function Post(props) {
+  
   const [menuClick, setMenuClick] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
   const [isLiked,setIsLiked]=useState(false);
+const [renderLiked,setRenderLiked]=useState(false);
+
   const [likedBy,setLikedBy]=useState([]);
+  
 
 
   const postId = props.post?.postId;
 
- useEffect(() => {
+
+useEffect(() => {
 
   const fetchPostData = async () => {
     const postDocRef = doc(db, "posts", postId);
@@ -29,6 +35,7 @@ export default function Post(props) {
       setLikedBy(likedUsers);
     }
   };
+  
 
   fetchPostData();
 }, []);
@@ -49,52 +56,41 @@ if(props.likedPosts && postId)
   // const [isLiked, setIsLiked]=useState(props.isLiked);
 
   async function handelLiked(postId) {
-
+    if (!postId) {
+      console.error("Post ID is undefined");
+      return;
+    }
+    if(!props.userId){
+      console.log("userId is not defined: ",props.userID)
+      return;
+    }
+    
     const wasLiked = isLiked;
-  
-    // Toggle the local like state
     setIsLiked(prev => !prev);
-  
+    
     try {
+      
       const userDocRef = doc(db, "users", props.userId);
-     
-
-      const postDocRef=doc(db,"posts",postId)
-     
-  
+      const postDocRef = doc(db, "posts", postId);
   
       if (!wasLiked) {
-        // If the post was not liked, add it to the likedPosts array in Firestore
-        
-        setLikedBy(prev => [...prev,props.userId])
-       
+        setLikedBy(prev => [...prev, props.userId]);
         await updateDoc(userDocRef, {
           likedPosts: arrayUnion(postId)
-
         });
-        await updateDoc(postDocRef,{
-          likedBy:arrayUnion(props.userId)
-          
-        })
-        
-
+        await updateDoc(postDocRef, {
+          likedBy: arrayUnion(props.userId)
+        });
       } else {
-        // If the post was already liked, remove it from the likedPosts array in Firestore
-        setLikedBy((prev)=>{
-         return prev.filter(id => id != props.userId);
-        })
-        
+        setLikedBy(prev => prev.filter(id => id !== props.userId));
         await updateDoc(userDocRef, {
           likedPosts: arrayRemove(postId)
         });
-
-        await updateDoc(postDocRef,{
-          likedBy:arrayRemove(props.userId)
-        })
+        await updateDoc(postDocRef, {
+          likedBy: arrayRemove(props.userId)
+        });
       }
-
       
-      console.log(likedBy)
       console.log("Firestore likedPosts array updated successfully.");
     } catch (error) {
       console.error("Error updating likedPosts array:", error);
@@ -111,6 +107,9 @@ if(props.likedPosts && postId)
     setIsHidden(true);
   }
   
+  function displayLikedBy(){
+    setRenderLiked(true)
+  }
   
 
   return (
@@ -152,12 +151,14 @@ if(props.likedPosts && postId)
               {/* ---------------MENU------------------------ */}
             {props.post.userId === props.userId && (
               <div className="ml-auto">
+
                 <button
                   className="px-2 rounded-md hover:bg-slate-700 cursor-pointer"
                   onClick={() => threeDots(props.post.postId, props.post.userId)}
                 >
                   <p className="font-extrabold">&#8942;</p>
                 </button>
+
                 <AnimatePresence>
                   {menuClick && (
 
@@ -187,14 +188,35 @@ if(props.likedPosts && postId)
             <div className="flex flex-col w-fit items-center">
 
             <button className="w-6" onClick={()=>handelLiked(props.post.postId)} ><img src={isLiked? liked: notLiked} alt=""/></button>
-            <button className="text-slate-600 text-sm">{likedBy.length? likedBy.length : null}</button>
+            <button className="text-slate-600 text-sm" onClick={displayLikedBy}>{likedBy.length? likedBy.length : null}</button>
 
             </div>
            
           </div>
           </div>
+
+          { likedBy.length > 0 && renderLiked == true && (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      key="likedByUsers"
+    >
+      <LikedByUsers 
+      
+      likedBy={likedBy}
+      setRenderLiked = {setRenderLiked}
+      mainUserId={props.userId}
+      
+       />
+
+    </motion.div>
+  )}
+         
         
         </motion.div>
+
+        
       )}
     </AnimatePresence>
   );

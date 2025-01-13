@@ -1,1 +1,13 @@
 npx tailwindcss -i ./src/input.css -o ./src/index.css --watch
+
+
+//
+up next
+1: firstly, solve the like problem, n is undefined // solved, i just forgot to login
+
+
+2: learn redux
+
+lets do what we can without using redux
+
+for each post we have an array that contains userids for 
