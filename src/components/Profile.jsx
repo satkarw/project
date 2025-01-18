@@ -6,20 +6,21 @@ import { Link } from "react-router-dom";
 import Posts from "./Posts";
 import SkeletonLoader from "./SkeletonLoader";
 import { motion, LayoutGroup, AnimatePresence } from "framer-motion";
+import Logout from "./Logout";
+import { setIfLoggedIn,setUserObj } from "../store/authSlice";
+import { useDispatch,useSelector } from "react-redux";
+
+
 
 export default function Profile(props) {
+  const dispatch = useDispatch();
+
+  const ifLoggedIn = useSelector((state)=> state.auth.ifLoggedIn)
+  const userObj = useSelector((state)=>state.auth.userObj)
   
   const location = useLocation();
   const { userId } = useParams();
   const mainUserId = location.state?.mainUserId;
-  
-  
-
- 
-    
-  
-
-
   const [profileData, setProfileData] = useState(null);
   
 
@@ -71,8 +72,11 @@ export default function Profile(props) {
         </div>
       </div>
 
-      <div className="pl-6">
+      <div className="pl-6 flex place-content-between">
         <p className="text-2xl font-bold">{userProfile.ghostName}</p>
+
+      {mainUserId == userId ?  <div className="mr-4"> <Logout /></div> : null}
+
       </div>
 
       {/* ------------------------------- Posts ---------------------*/}

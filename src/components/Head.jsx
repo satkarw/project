@@ -2,7 +2,9 @@ import React from "react";
 import { useState } from "react";
 import { CSSTransition } from "react-transition-group";
 import logo from "../../public/logo.png";
+import notiIcon from "../../public/notification_icon.png"
 import { doc, getDoc, addDoc, collection , setDoc } from 'firebase/firestore';
+import homeIcon from "../../public/homeIcon.png";
 
 import { db } from './firebaseConfig'; // Import Firestore instance
 import Logout from "./Logout";
@@ -114,16 +116,31 @@ export default function Head(props) {
                 <a href="#" className="text-xl pl-2 hover hover:underline">Your Feed</a>
                 <div className="ml-auto mr-2">
                     {isLoggedIn() ? (
-                        <div className="flex gap-2">
-                            <button className="border px-3 rounded-md hover:bg-slate-800">
+                        <div className="flex gap-2 ">
+                            <button className="">
+                                    <Link to="/" className="flex justify-center items-center ">
+                                      <img src={homeIcon} alt="" className="w-7" /> 
+                                    </Link>
+                                  </button>
+
+
+                            <button className="border p-1 rounded-full hover:bg-slate-800">
+
+                                {/*-----------------Notifications-------------------------------------------*/}
+                            <Link to={`/Notifications`}
+                                    state={{userPosts: props.userPosts, userID:props.userId , userProfile: props.userProfile, mainUserId:props.userId}}>
+                                   <img src={notiIcon} alt="" className="w-5 rounded-full" />
+                            </Link>
+                            </button>
+
+                            <button className=" rounded-full ">
 
                                 {/*-----------------profile-------------------------------------------*/}
                             <Link to={`/profile/${props.userId}`}
                                     state={{userPosts: props.userPosts, userID:props.userId , userProfile: props.userProfile, mainUserId:props.userId}}>
-                                    Profile
+                                   <img src={logo} alt="" className="w-7 h-7 rounded-full" />
                             </Link>
                             </button>
-                            <Logout setIfLoggedIn={props.setIfLoggedIn} setUserObj={props.setUserObj} />
                         </div>
                     ) : (
                         <div className="flex gap-5">

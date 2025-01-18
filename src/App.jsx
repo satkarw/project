@@ -6,6 +6,7 @@ import Mid from './components/Mid';
 import Profile from './components/Profile';
 import { getDoc,getFirestore,doc,updateDoc,arrayRemove,deleteDoc, collection, query,where,getDocs } from 'firebase/firestore';
 import { db } from './components/firebaseConfig';
+import Notifications from './components/Notifications';
 
 function App() {
 
@@ -134,7 +135,20 @@ async function deletePost(postId,userId){
               setLikedPosts = {setLikedPosts}
              
               />} />
-           
+
+              <Route
+              
+              path="/notifications" element = {
+                <Notifications
+                
+                
+                />
+              }
+              
+              />
+
+            
+
               {/* <Route path="*" element={<NotFound />} /> */}
              
 

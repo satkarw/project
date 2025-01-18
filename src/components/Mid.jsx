@@ -9,13 +9,20 @@ import { fetchDataFromFirestore } from "./firebaseConfig";
 import { collection, doc, getDoc,setDoc, deleteDoc, arrayUnion, updateDoc} from 'firebase/firestore'; // Add Firestore functions
 import { db } from './firebaseConfig';
 
+import { setIfLoggedIn,setUserObj } from "../store/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+
 
 export default function Mid(props) {
 
+  const dispatch = useDispatch();
+  const ifLoggedIn = useSelector((state)=> state.auth.ifLoggedIn);
+  const userObj = useSelector((state)=> state.auth.userObj)
+
   const [logInState, setLoginState] = useState('');
-  const [ifLoggedIn, setIfLoggedIn] = useState(false)
+  
   const auth = getAuth();
-  const [userObj, setUserObj] = useState('');
+  
   const [newPost, setNewPost] = useState([]);
   
 
@@ -29,8 +36,8 @@ export default function Mid(props) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setIfLoggedIn(true);
-        setUserObj(user);
+        dispatch(setIfLoggedIn(true))
+        dispatch(setUserObj(user));
   
         const userId = user.uid;
   
@@ -48,13 +55,13 @@ export default function Mid(props) {
         }
         fetchLikedPost();
       } else {
-        setIfLoggedIn(false);
-        setUserObj(null); // Handle when user logs out
+        dispatch(setIfLoggedIn(false))
+        dispatch(setUserObj(null)) // Handle when user logs out
       }
     });
   
     return () => unsubscribe();
-  }, [auth]);
+  }, [dispatch]);
   
 
 
@@ -132,12 +139,15 @@ export default function Mid(props) {
       <Head
         setLoginState={setLoginState}
         ifLoggedIn={ifLoggedIn}
-        setIfLoggedIn={setIfLoggedIn}
+
+        setIfLoggedIn={(state)=>dispatch(setIfLoggedIn(state))}
+        setUserObj={(user)=>dispatch(setUserObj(user))}
+
         userData={userObj}
         userId={userObj?.uid}
         userPosts={userPosts}
         setNewPost={setNewPost}
-        setUserObj={setUserObj}
+        
         userProfile={userData} ///this is for the data from firestore
 
       />
@@ -151,9 +161,9 @@ export default function Mid(props) {
         setLikedPosts={props.setLikedPosts}
       />
       {logInState && (logInState === 'signin' ?
-        <Sign setLoginState={setLoginState} setIfLoggedIn={setIfLoggedIn} />
+        <Sign setLoginState={setLoginState} setIfLoggedIn={(state)=>dispatch(setIfLoggedIn(state))} />
         :
-        <Login setLoginState={setLoginState} setIfLoggedIn={setIfLoggedIn} />
+        <Login setLoginState={setLoginState} setIfLoggedIn={(state)=>dispatch(setIfLoggedIn(state))} />
       )}
     </div>
   );
