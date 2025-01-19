@@ -14,7 +14,9 @@ import {
   where,
   doc,
   setDoc,
-  getDoc
+  getDoc,
+  arrayUnion,
+  updateDoc
 } from "firebase/firestore";
 import { getDatabase, ref, set } from "firebase/database";
 import { orderByChild, get } from "firebase/database";
@@ -75,6 +77,30 @@ export const saveDataToFirestore = async (collectionName, data, userId) => {
     console.error("Error adding document: ", error);
   }
 };
+
+
+export const addNotifications = async (userId, notificationData) => {
+  try {
+    const userDocRef = doc(db, "users", userId);
+    const userSnap = await getDoc(userDocRef);
+
+    if (userSnap.exists()) {
+      // Use arrayUnion to append the new notification to the existing array
+      await updateDoc(userDocRef, {
+        notification: arrayUnion(notificationData),
+      });
+
+      console.log("Notification added successfully");
+    } else {
+      console.error(`User with ID ${userId} does not exist.`);
+    }
+  } catch (error) {
+    console.error(`Error while adding notification to database: ${error}`);
+  }
+};
+
+
+
 
 export const fetchDataFromFirestore = async (collectionName, userId) => {
   try {
@@ -148,6 +174,25 @@ export const fetchUserProfile = async (userId) => {
   }
 };
 
+export const fetchNotificationData = async (userId) => {
+  try {
+    const userDocRef = doc(db, "users", userId); // Reference to the user's document
+    const userDocSnap = await getDoc(userDocRef); // Fetch the document snapshot
+
+    if (userDocSnap.exists()) {
+      const userData = userDocSnap.data(); // Declare and assign the variable properly
+      return userData.notification|| []; // Return notificationData if it exists
+    } else {
+      console.log("No such user document!");
+      return []; // Return an empty array if no document is found
+    }
+  } catch (error) {
+    console.error("Error while fetching notifications:", error);
+    return []; // Return an empty array in case of an error
+  }
+};
+
+
 export const fetchUserName = async(userId) =>{
   try{
 
@@ -170,6 +215,8 @@ export const fetchUserName = async(userId) =>{
   }
 } 
 
+
+
 // Fetch posts from Firestore and order them by timestamp
 export const fetchPostsFromFirestore = async () => {
   try {
@@ -188,3 +235,5 @@ export const fetchPostsFromFirestore = async () => {
     return [];
   }
 };
+
+

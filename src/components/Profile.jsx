@@ -20,12 +20,12 @@ export default function Profile(props) {
   
   const location = useLocation();
   const { userId } = useParams();
-  const mainUserId = location.state?.mainUserId;
+  const mainUserId = location.state?.mainUserId || '';
   const [profileData, setProfileData] = useState(null);
   
 
   useEffect(() => {
-    if (location.state ) {
+    if (location.state ) { 
      
 
       if(!profileData){
@@ -52,6 +52,8 @@ export default function Profile(props) {
   } else {
     allPosts = props.profilePosts;
   }
+
+
 
   return (
     <>

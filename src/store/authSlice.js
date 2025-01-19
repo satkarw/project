@@ -15,8 +15,14 @@ const authSlice = createSlice({
         setUserObj:(state,action)=>{
             state.userObj = action.payload;
         },
+        setNotificationData:(state,action)=>{
+            state.notificationData = action.payload;
+        },
+        
+        
+        
     },
 })
 
-export const {setIfLoggedIn,setUserObj} = authSlice.actions;
+export const {setIfLoggedIn,setUserObj,setNotificationData} = authSlice.actions;
 export default authSlice.reducer;

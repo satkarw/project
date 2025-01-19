@@ -7,6 +7,7 @@ import Profile from './components/Profile';
 import { getDoc,getFirestore,doc,updateDoc,arrayRemove,deleteDoc, collection, query,where,getDocs } from 'firebase/firestore';
 import { db } from './components/firebaseConfig';
 import Notifications from './components/Notifications';
+import IndividualPost from './components/IndividualPost';
 
 function App() {
 
@@ -143,6 +144,16 @@ async function deletePost(postId,userId){
                 
                 
                 />
+              }
+              
+              />
+
+              <Route 
+              path="/individualPost/:postId"
+              element = {
+                 <IndividualPost
+                 
+                 />
               }
               
               />
