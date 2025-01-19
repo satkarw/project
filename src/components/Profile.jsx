@@ -57,7 +57,7 @@ export default function Profile(props) {
 
   return (
     <>
-     {/* <AnimatePresence> */}
+     <AnimatePresence>
 
     {/* this is for when user uploads a new post */}
     
@@ -88,8 +88,13 @@ export default function Profile(props) {
       </div>
 
 <LayoutGroup>
+  
   <motion.div
-  layout 
+  layout
+  initial={{ scale: 0.9, opacity: 0 }}
+  animate={{ scale: 1, opacity: 1 }}
+  exit={{ scale: 0.5, opacity: 0 }}
+  transition={{ type: "spring", stiffness: 300, damping: 20 }}
   >
 {  
 
@@ -113,7 +118,7 @@ likedPosts={props.likedPosts}
 </motion.div>
 </LayoutGroup>
 
-{/* </AnimatePresence> */}
+</AnimatePresence>
     </>
   );
 }

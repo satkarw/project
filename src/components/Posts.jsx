@@ -141,9 +141,9 @@ if(props.likedPosts && postId)
     setRenderLiked(true)
   }
 
-  function handlePostClick(postId){
-    navigate(`/individualPost/${postId}`)
-  }
+  // function handlePostClick(postId){
+  //   navigate(`/individualPost/${postId}`)
+  // }
   
 
   return (
@@ -162,7 +162,7 @@ if(props.likedPosts && postId)
           <div className="flex gap-2 items-center">
             <img src={logo} alt="User Logo" className="rounded-full w-10" />
             <Link
-              to={`useSelector((state)=> state.auth.userObj)/profile/${props.post.userId}`}
+              to={`profile/${props.post.userId}`}
               state={{
                 userID: props.post.userId,
                 userProfile: {},
