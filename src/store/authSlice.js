@@ -18,11 +18,13 @@ const authSlice = createSlice({
         setNotificationData:(state,action)=>{
             state.notificationData = action.payload;
         },
-        
+        setGhostName:(state,action)=>{
+            state.ghostName = action.payload;
+        },
         
         
     },
 })
 
-export const {setIfLoggedIn,setUserObj,setNotificationData} = authSlice.actions;
+export const {setIfLoggedIn,setUserObj,setNotificationData,setGhostName} = authSlice.actions;
 export default authSlice.reducer;

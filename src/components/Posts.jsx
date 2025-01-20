@@ -21,6 +21,8 @@ const [renderLiked,setRenderLiked]=useState(false);
 
   const [likedBy,setLikedBy]=useState([]);
   const navigate = useNavigate();
+  const userName = useSelector((state)=>state.auth.ghostName)
+ 
   
 
 
@@ -90,12 +92,15 @@ if(props.likedPosts && postId)
           type:"post_like",
           postId:postId,
           likedByUserId:props.userId,
-          likedByUserName:props.post.ghostName,
+          likedByUserName:userName,
           userId:props.post.userId,
           timeStamp:Date.now(),
           viewed: false
     
         }
+
+        console.log(`props.userId${props.userId}`)
+        console.log(`props.post.userId ${props.post.userId}`)
 
         addNotification(notificationData)
     
@@ -156,7 +161,7 @@ if(props.likedPosts && postId)
           exit={{ scale: 0.5, opacity: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 20 }}
           className="mt-4 ml-3 mr-3  border border-gray-700 p-3 rounded-lg flex flex-col gap-4 relative hover:border-gray-500 hover:shadow-md transition-all"
-        
+          index={postId}
         >
           {/* User info */}
           <div className="flex gap-2 items-center">

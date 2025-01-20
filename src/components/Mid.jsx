@@ -4,10 +4,10 @@ import Feed from "./Feed";
 import Sign from "./Sign";
 import Login from "./Login";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { fetchPostsFromFirestore, fetchDataFromFirestore, fetchNotificationData } from "./firebaseConfig";
+import { fetchPostsFromFirestore, fetchDataFromFirestore, fetchNotificationData,fetchUserName } from "./firebaseConfig";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "./firebaseConfig";
-import { setIfLoggedIn, setUserObj, setNotificationData } from "../store/authSlice";
+import { setIfLoggedIn, setUserObj, setNotificationData, setGhostName } from "../store/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function Mid(props) {
@@ -71,6 +71,7 @@ export default function Mid(props) {
     fetchPosts();
   }, []);
 
+
   // Fetch user-specific posts
   useEffect(() => {
     if (userObj?.uid) {
@@ -118,6 +119,24 @@ export default function Mid(props) {
     };
     fetchNotifications();
   }, [userObj?.uid, dispatch]);
+
+
+  useEffect(()=>{
+    const fetchGhostName = async()=>{
+      if(userObj?.uid){
+        try{
+          const ghostName =await fetchUserName(userObj.uid)
+          dispatch(setGhostName(ghostName))
+          
+        }
+        catch(error){
+          console.log("error while fetching userName",error)
+        }
+
+      }
+    }
+    fetchGhostName();
+  },[userObj?.uid,dispatch])
 
   return (
     <div className="relative flex flex-col w-full">
