@@ -21,9 +21,11 @@ const [renderLiked,setRenderLiked]=useState(false);
 
   const [likedBy,setLikedBy]=useState([]);
   const navigate = useNavigate();
-  const userName = useSelector((state)=>state.auth.ghostName)
- 
-  
+
+
+
+  console.log("post")
+
 
 
   const postId = props.post?.postId;
@@ -56,7 +58,7 @@ if(props.likedPosts && postId)
 
     setIsLiked(isPostLiked);
     }
-  },[props.likedPosts,postId])
+  },[postId])
 
 //props.isLiked isnt defined
   // const [isLiked, setIsLiked]=useState(props.isLiked);
@@ -92,7 +94,7 @@ if(props.likedPosts && postId)
           type:"post_like",
           postId:postId,
           likedByUserId:props.userId,
-          likedByUserName:userName,
+          likedByUserName:props.userName,
           userId:props.post.userId,
           timeStamp:Date.now(),
           viewed: false

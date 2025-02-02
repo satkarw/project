@@ -1,12 +1,18 @@
+
 import React from "react";
 import logo from "../../public/logo.png";
 import { Link } from "react-router-dom";
 import Posts from "./Posts";
 import SkeletonLoader from "./SkeletonLoader";
 import { motion, LayoutGroup, AnimatePresence } from "framer-motion";
+import { useSelector } from "react-redux";
+import { setGhostName } from "../store/authSlice";
 
 export default function Feed(props) {
   const posts = props.posts;
+  const userNameObj = useSelector((state) => state.auth.ghostName);
+const userName = userNameObj ? userNameObj.userName : '';  // Fallback to empty string if undefined
+
 
   if (posts.length < 1) {
     return <SkeletonLoader />;
@@ -81,6 +87,7 @@ export default function Feed(props) {
                 deletePost={props.deletePost}
                 likedPosts={props.likedPosts||[]}
                 setLikedPosts ={props.setLikedPosts}
+                userName={userName}
               />)
             )}
           </motion.div>
