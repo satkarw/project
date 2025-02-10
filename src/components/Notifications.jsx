@@ -13,6 +13,11 @@ export default function Notifications() {
     function notificationClick() {
         alert("Under Development");
     }
+    // console.log("likedByUserName:", notificationData);
+    notificationData.map((notification)=> (
+        console.log("likedByUserName:", notification.likedByUserName.userName)
+    ))
+
 
     // Render the loader or the notification data
     return (
@@ -37,7 +42,7 @@ export default function Notifications() {
                                 <button key={index} className="border p-3 rounded">
                                     {notification.type === "post_like" ? (
                                         <span>
-                                            <strong>{notification.likedByUserName}</strong> liked your post.
+                                            <strong>{notification.likedByUserName || "Unknown user"}</strong> liked your post.
                                         </span>
                                     ) : (
                                         <span>Notification type not handled.</span>

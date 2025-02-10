@@ -130,7 +130,7 @@ if(props.likedPosts && postId)
  async function addNotification(notificationData){
 
 
-
+    // console.log("notificationData",notificationData);
     await addNotifications(notificationData.userId,notificationData)
   }
   
@@ -145,6 +145,7 @@ if(props.likedPosts && postId)
   }
   
   function displayLikedBy(){
+    
     setRenderLiked(true)
   }
 
@@ -201,7 +202,7 @@ if(props.likedPosts && postId)
                   <p className="font-extrabold">&#8942;</p>
                 </button>
 
-                <AnimatePresence>
+                <div>
                   {menuClick && (
 
                     <motion.div
@@ -219,7 +220,7 @@ if(props.likedPosts && postId)
                       </button>
                     </motion.div>
                   )}
-                </AnimatePresence>
+                </div>
               </div>
             )}
           </div>

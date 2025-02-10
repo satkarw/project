@@ -113,7 +113,7 @@ export default function Head(props) {
                 {/* <button onClick={reload}>
                     <img src={logo} alt="Logo" className="w-10 pr-3 rounded-lg" />
                 </button> */}
-                <a href="#" className="text-xl pl-2 hover hover:underline">Your Feed</a>
+                <a href="#" className="text-xl pl-2 hover hover:underline">Your feed</a>
                 <div className="ml-auto mr-2">
                     {isLoggedIn() ? (
                         <div className="flex gap-2 ">

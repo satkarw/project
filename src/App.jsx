@@ -8,11 +8,13 @@ import { getDoc,getFirestore,doc,updateDoc,arrayRemove,deleteDoc, collection, qu
 import { db } from './components/firebaseConfig';
 import Notifications from './components/Notifications';
 import IndividualPost from './components/IndividualPost';
+// import { resolveNotifications } from './components/firebaseConfig';
 
 function App() {
 
 
   const [likedPosts,setLikedPosts]= useState([]);
+  
 
 async function deletePost(postId,userId){
 

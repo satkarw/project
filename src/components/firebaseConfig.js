@@ -99,6 +99,25 @@ export const addNotifications = async (userId, notificationData) => {
   }
 };
 
+export const fetchNotificationData = async (userId) => {
+  try {
+    const userDocRef = doc(db, "users", userId); // Reference to the user's document
+    const userDocSnap = await getDoc(userDocRef); // Fetch the document snapshot
+
+    if (userDocSnap.exists()) {
+      const userData = userDocSnap.data(); // Declare and assign the variable properly
+      return userData.notification|| []; // Return notificationData if it exists
+    } else {
+      console.log("No such user document!");
+      return []; // Return an empty array if no document is found
+    }
+  } catch (error) {
+    console.error("Error while fetching notifications:", error);
+    return []; // Return an empty array in case of an error
+  }
+};
+
+
 
 
 
@@ -174,23 +193,6 @@ export const fetchUserProfile = async (userId) => {
   }
 };
 
-export const fetchNotificationData = async (userId) => {
-  try {
-    const userDocRef = doc(db, "users", userId); // Reference to the user's document
-    const userDocSnap = await getDoc(userDocRef); // Fetch the document snapshot
-
-    if (userDocSnap.exists()) {
-      const userData = userDocSnap.data(); // Declare and assign the variable properly
-      return userData.notification|| []; // Return notificationData if it exists
-    } else {
-      console.log("No such user document!");
-      return []; // Return an empty array if no document is found
-    }
-  } catch (error) {
-    console.error("Error while fetching notifications:", error);
-    return []; // Return an empty array in case of an error
-  }
-};
 
 
 export const fetchUserName = async(userId) =>{
