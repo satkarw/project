@@ -177,32 +177,44 @@ const Post = React.memo(function Post(props) {
       </div>
       <div className="mx-3 my-0 whitespace-pre-wrap">
         <p className="md:text-xl text-lg mb-3">{props.post.postText}</p>
-        <div className="border-t pt-1 flex flex-col flex-start">
+        <motion.div layout className="border-t pt-1 flex flex-col flex-start">
           <div className="flex flex-col w-fit items-center">
-            <button className="w-6" onClick={() => handleLiked(postId)}>
+          <AnimatePresence mode="wait">
+            <motion.button className="w-6" onClick={() => handleLiked(postId)}>
               <img src={isLiked ? liked : notLiked || "/placeholder.svg"} alt="" />
-            </button>
-            <button className="text-slate-600 text-sm" onClick={displayLikedBy}>
-              {likedBy.length ? likedBy.length : null}
-            </button>
-          </div>
-        </div>
-      </div>
+            </motion.button>
 
+            <motion.button 
+            layout
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="text-slate-600 text-sm" 
+            onClick={displayLikedBy}>
+              {likedBy.length > 0 && likedBy.length}
+            </motion.button>
+            </AnimatePresence>
+            </div>
+        </motion.div>
+      </div>
+     
+      </SpotlightCard>
+      
       <AnimatePresence>
         {likedBy.length > 0 && renderLiked && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+            transition={{ type: "spring", stiffness:500, damping: 30 }}
             key="likedByUsers"
+           className="absolute w-full "
           >
             <LikedByUsers likedBy={likedBy} setRenderLiked={setRenderLiked} mainUserId={props.userId} />
           </motion.div>
         )}
       </AnimatePresence>
-      </SpotlightCard>
+     
+      
     </motion.div>
     </layoutGroup>
   )
