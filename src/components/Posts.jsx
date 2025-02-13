@@ -1,15 +1,18 @@
 "use client"
 
-import React, { useEffect, useState, useCallback, useMemo } from "react"
+import React, { useEffect, useState, useCallback, useMemo, useRef } from "react"
 import logo from "../../public/logo.png"
 import liked from "../../public/liked.png"
 import notLiked from "../../public/notLiked.png"
 import { Link } from "react-router-dom"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion, AnimatePresence, LayoutGroup } from "framer-motion"
 import { doc, updateDoc, arrayUnion, arrayRemove, getDoc } from "firebase/firestore"
 import { db } from "./firebaseConfig"
 import LikedByUsers from "./LikedByUsers"
 import { addNotifications } from "./firebaseConfig"
+
+import SpotlightCard from "./SpotlightCard"
+
 
 const Post = React.memo(function Post(props) {
   const [menuClick, setMenuClick] = useState(false)
@@ -120,15 +123,17 @@ const Post = React.memo(function Post(props) {
   }
 
   return (
+    <layoutGroup>
     <motion.div
       layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ type: "spring", stiffness: 500, damping: 30 }}
-      className="mt-4 ml-3 mr-3 border border-gray-700 p-3 rounded-lg flex flex-col gap-4 relative hover:border-gray-500 hover:shadow-md transition-all"
+      className="mt-4 ml-3 mr-3  rounded-lg flex flex-col gap-4 relative hover:border-gray-500 hover:shadow-md transition-all"
     >
       {/* User info */}
+      <SpotlightCard className="mt-4 ml-3 mr-3 border border-gray-700 p-3 rounded-lg flex flex-col gap-4 relative hover:border-gray-500 hover:shadow-md transition-all">
       <div className="flex gap-2 items-center">
         <img src={logo || "/placeholder.svg"} alt="User Logo" className="rounded-full w-10" />
         <Link
@@ -197,7 +202,9 @@ const Post = React.memo(function Post(props) {
           </motion.div>
         )}
       </AnimatePresence>
+      </SpotlightCard>
     </motion.div>
+    </layoutGroup>
   )
 })
 

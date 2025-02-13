@@ -7,6 +7,7 @@ import Post from "./Posts"
 import SkeletonLoader from "./SkeletonLoader"
 import { motion, AnimatePresence } from "framer-motion"
 import { useSelector } from "react-redux"
+import SpotlightCard from "./SpotlightCard"
 
 export default function Feed(props) {
   const posts = props.posts
@@ -36,13 +37,14 @@ export default function Feed(props) {
         {props.newPost.length > 0 &&
           props.newPost.map((post, index) => (
             <motion.div
-              layout
-              initial={{ scale: 0.5, opacity: 0, y: -50 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              transition={{ type: "spring", stiffness: 200, damping: 15 }}
-              className="mt-4 ml-3 mr-3 border border-gray-700 p-3 rounded-lg flex flex-col gap-4"
-              key={post.postId}
+            layout
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+            className="mt-4 ml-3 mr-3  rounded-lg flex flex-col gap-4 relative hover:border-gray-500 hover:shadow-md transition-all"
             >
+              <SpotlightCard className="mt-4 ml-3 mr-3 border border-gray-700 p-3 rounded-lg flex flex-col gap-4 relative hover:border-gray-500 hover:shadow-md transition-all">
               {/* New post details */}
               <div className="flex gap-2 items-center">
                 <img src={logo || "/placeholder.svg"} alt="" className="rounded-full w-10" />
@@ -75,6 +77,7 @@ export default function Feed(props) {
               <div>
                 <p className="text-slate-600 text-sm ml-5">Refresh to like the post..</p>
               </div>
+              </SpotlightCard>
             </motion.div>
           ))}
 
